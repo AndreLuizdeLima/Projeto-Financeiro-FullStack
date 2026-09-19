@@ -69,7 +69,9 @@ export class UsersService {
       user.passwordHash = await this.hashingService.hash(password);
     }
 
-    return this.userRepository.save(user);
+    const { passwordHash: _passwordHash, ...userReturn } =
+      await this.userRepository.save(user);
+    return userReturn;
   }
 
   async remove(id: number) {

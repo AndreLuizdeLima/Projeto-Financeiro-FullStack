@@ -37,6 +37,7 @@ export class UsersService {
     }
   }
 
+  // Futuramente implementar paginação
   findAll() {
     return this.userRepository.find({
       take: 100,
@@ -44,8 +45,12 @@ export class UsersService {
     });
   }
 
-  findOne(id: number) {
-    return this.userRepository.findOne({ where: { id } });
+  async findOne(id: number) {
+    const userData = await this.userRepository.findOne({ where: { id } });
+    if (!userData) {
+      throw new NotFoundException('Usuário não encontrada.');
+    }
+    return userData;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {

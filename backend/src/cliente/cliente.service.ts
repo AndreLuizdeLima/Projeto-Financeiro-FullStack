@@ -33,6 +33,7 @@ export class ClienteService {
     const cliente = this.clienteRepository.create({
       ...createClienteDto,
       criadoPor: user,
+      isActive: true,
     });
 
     return this.clienteRepository.save(cliente);
@@ -77,10 +78,17 @@ export class ClienteService {
   }
 
   async remove(id: number) {
-    const user = await this.clienteRepository.findOneBy({ id });
-    if (!user) {
+    const cliente = await this.clienteRepository.preload({
+      id,
+      ...{
+        isActive: false,
+      },
+    });
+
+    if (!cliente) {
       throw new NotFoundException('Cliente não encontrada.');
     }
-    return this.clienteRepository.remove(user);
+
+    return this.clienteRepository.save(cliente);
   }
 }

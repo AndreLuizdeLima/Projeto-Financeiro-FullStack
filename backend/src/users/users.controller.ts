@@ -6,12 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
+import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('users')
@@ -24,8 +27,11 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  findAll(
+    @Query(new ValidationPipe({ transform: true, whitelist: true }))
+    pagination: PaginationQueryDto,
+  ) {
+    return this.usersService.findAll(pagination);
   }
 
   @Get(':id')

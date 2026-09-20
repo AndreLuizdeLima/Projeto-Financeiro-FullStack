@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { HashingService } from '@/auth/hashing/hashing.service';
+import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
 
 @Injectable()
 export class UsersService {
@@ -37,12 +38,28 @@ export class UsersService {
     }
   }
 
-  // Futuramente implementar paginação
-  findAll() {
-    return this.userRepository.find({
-      take: 100,
+  async findAll({ page, limit }: PaginationQueryDto) {
+    const [data, total] = await this.userRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
       order: { id: 'DESC' },
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        createDate: true,
+        updateDate: true,
+      },
     });
+
+    return {
+      data,
+      meta: {
+        page,
+        total,
+        hasNextPage: page * limit < total,
+      },
+    };
   }
 
   async findOne(id: number) {

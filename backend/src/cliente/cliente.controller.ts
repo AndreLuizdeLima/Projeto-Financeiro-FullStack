@@ -6,14 +6,17 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
   UseGuards,
   Req,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ClienteService } from './cliente.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
 import type { AuthenticatedRequest } from '@/auth/guards/jwt-auth.guard';
+import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
 @UseGuards(JwtAuthGuard)
 @Controller('cliente')
 export class ClienteController {
@@ -28,8 +31,11 @@ export class ClienteController {
   }
 
   @Get()
-  findAll() {
-    return this.clienteService.findAll();
+  findAll(
+    @Query(new ValidationPipe({ transform: true, whitelist: true }))
+    pagination: PaginationQueryDto,
+  ) {
+    return this.clienteService.findAll(pagination);
   }
 
   @Get(':id')

@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Cliente } from './entities/cliente.entity';
 import { Repository } from 'typeorm';
 import { User } from '@/users/entities/user.entity';
+import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
 
 @Injectable()
 export class ClienteService {
@@ -37,11 +38,21 @@ export class ClienteService {
     return this.clienteRepository.save(cliente);
   }
 
-  findAll() {
-    return this.clienteRepository.find({
-      take: 100,
+  async findAll({ page, limit }: PaginationQueryDto) {
+    const [data, total] = await this.clienteRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
       order: { id: 'DESC' },
     });
+
+    return {
+      data,
+      meta: {
+        page,
+        total,
+        hasNextPage: page * limit < total,
+      },
+    };
   }
 
   async findOne(id: number) {

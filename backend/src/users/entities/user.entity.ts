@@ -1,4 +1,5 @@
 import { Cliente } from '@/cliente/entities/cliente.entity';
+import { FormasRecebimento } from '@/formas-recebimento/entities/formas-recebimento.entity';
 import {
   Column,
   CreateDateColumn,
@@ -30,4 +31,10 @@ export class User {
 
   @OneToMany(() => Cliente, (cliente) => cliente.criadoPor)
   clientesCriados!: Cliente[];
+
+  @OneToMany(
+    () => FormasRecebimento,
+    (formasRecebimento) => formasRecebimento.criadoPor,
+  )
+  formasRecebimentosCriados!: FormasRecebimento[];
 }

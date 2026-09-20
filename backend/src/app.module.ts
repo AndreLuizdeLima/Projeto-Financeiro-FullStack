@@ -7,6 +7,7 @@ import databaseConfig from './config/database.config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ClienteModule } from './cliente/cliente.module';
+import { FormasRecebimentoModule } from './formas-recebimento/formas-recebimento.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ClienteModule } from './cliente/cliente.module';
     UsersModule,
     AuthModule,
     ClienteModule,
+    FormasRecebimentoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

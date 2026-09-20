@@ -57,11 +57,11 @@ export class ClienteService {
   }
 
   async findOne(id: number) {
-    const userData = await this.clienteRepository.findOne({ where: { id } });
-    if (!userData) {
+    const clienteData = await this.clienteRepository.findOne({ where: { id } });
+    if (!clienteData) {
       throw new NotFoundException('Cliente não encontrada.');
     }
-    return userData;
+    return clienteData;
   }
 
   async update(id: number, updateClienteDto: UpdateClienteDto) {

@@ -40,6 +40,6 @@ import { BcryptService } from './hashing/bcrypt.service';
       useClass: BcryptService,
     },
   ],
-  exports: [HashingService, JwtAuthGuard],
+  exports: [HashingService, JwtModule, JwtAuthGuard],
 })
 export class AuthModule {}

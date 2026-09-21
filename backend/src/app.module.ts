@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ClienteModule } from './cliente/cliente.module';
 import { FormasRecebimentoModule } from './formas-recebimento/formas-recebimento.module';
+import { CentroDeCustoModule } from './centro-de-custo/centro-de-custo.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { FormasRecebimentoModule } from './formas-recebimento/formas-recebimento
     AuthModule,
     ClienteModule,
     FormasRecebimentoModule,
+    CentroDeCustoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

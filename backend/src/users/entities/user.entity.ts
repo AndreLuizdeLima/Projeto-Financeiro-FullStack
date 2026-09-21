@@ -1,3 +1,4 @@
+import { CentroDeCusto } from '@/centro-de-custo/entities/centro-de-custo.entity';
 import { Cliente } from '@/cliente/entities/cliente.entity';
 import { FormasRecebimento } from '@/formas-recebimento/entities/formas-recebimento.entity';
 import {
@@ -37,4 +38,7 @@ export class User {
     (formasRecebimento) => formasRecebimento.criadoPor,
   )
   formasRecebimentosCriados!: FormasRecebimento[];
+
+  @OneToMany(() => CentroDeCusto, (centrodecusto) => centrodecusto.criadoPor)
+  centroDeCustosCriados!: CentroDeCusto[];
 }

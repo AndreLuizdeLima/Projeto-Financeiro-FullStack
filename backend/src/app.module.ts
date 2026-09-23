@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ClienteModule } from './cliente/cliente.module';
 import { FormasRecebimentoModule } from './formas-recebimento/formas-recebimento.module';
 import { CentroDeCustoModule } from './centro-de-custo/centro-de-custo.module';
+import { ContaBancariaModule } from './conta-bancaria/conta-bancaria.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { CentroDeCustoModule } from './centro-de-custo/centro-de-custo.module';
     ClienteModule,
     FormasRecebimentoModule,
     CentroDeCustoModule,
+    ContaBancariaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

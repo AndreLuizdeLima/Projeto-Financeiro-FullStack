@@ -1,5 +1,6 @@
 import { CentroDeCusto } from '@/centro-de-custo/entities/centro-de-custo.entity';
 import { Cliente } from '@/cliente/entities/cliente.entity';
+import { ContaBancaria } from '@/conta-bancaria/entities/conta-bancaria.entity';
 import { FormasRecebimento } from '@/formas-recebimento/entities/formas-recebimento.entity';
 import {
   Column,
@@ -41,4 +42,7 @@ export class User {
 
   @OneToMany(() => CentroDeCusto, (centrodecusto) => centrodecusto.criadoPor)
   centroDeCustosCriados!: CentroDeCusto[];
+
+  @OneToMany(() => ContaBancaria, (contabancaria) => contabancaria.criadoPor)
+  contasBancariasCriados!: CentroDeCusto[];
 }

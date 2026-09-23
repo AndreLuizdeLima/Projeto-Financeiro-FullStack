@@ -10,6 +10,7 @@ export class CreateContaBancariaDto {
   @IsString()
   conta!: string;
 
+  @IsNotEmpty()
   @IsEnum(TipoDeContaBancaria, {
     message: 'tipo deve ser ContaCorrente, ContaPoupanca ou ContaSalario',
   })

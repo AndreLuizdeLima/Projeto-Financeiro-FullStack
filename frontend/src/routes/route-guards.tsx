@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from "react";
 import { Navigate, useLocation } from "react-router";
 import { useAuth } from "@/auth/use-auth";
-import { SessionLoadingScreen } from "@/components/session-loading-screen";
+import { SessionLoadingScreen } from "@/app/session/components/session-loading-screen";
 import { routePaths } from "@/routes/route-paths";
 
 function ProtectedRoute({ children }: PropsWithChildren) {

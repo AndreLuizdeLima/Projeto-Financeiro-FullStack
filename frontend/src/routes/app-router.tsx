@@ -1,19 +1,26 @@
 import { createBrowserRouter, Outlet, type RouteObject } from "react-router";
-import { DashboardPage } from "@/pages/dashboard-page";
-import { LoginPage } from "@/pages/login-page";
-import { NotFoundPage } from "@/pages/not-found-page";
-import { RouterErrorPage } from "@/pages/router-error-page";
+import { LoginPage } from "@/app/auth/page/login-page";
+import { DashboardPage } from "@/app/dashboard/page/dashboard-page";
+import { AppLayoutPage } from "@/app/layout/page/app-layout-page";
+import { NotFoundPage } from "@/app/system/page/not-found-page";
+import { RouterErrorPage } from "@/app/system/page/router-error-page";
 import { ProtectedRoute, PublicRoute } from "@/routes/route-guards";
 import { routePaths } from "@/routes/route-paths";
 
 const routeDefinitions = {
-  home: {
+  app: {
     path: routePaths.home,
     element: (
       <ProtectedRoute>
-        <DashboardPage />
+        <AppLayoutPage />
       </ProtectedRoute>
     ),
+    children: [
+      {
+        index: true,
+        element: <DashboardPage />,
+      },
+    ],
   },
   login: {
     path: routePaths.login,

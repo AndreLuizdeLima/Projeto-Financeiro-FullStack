@@ -3,12 +3,9 @@ import {
   Bell,
   CheckCircle2,
   Landmark,
-  LogOut,
   Plus,
   WalletCards,
 } from 'lucide-react'
-import { useAuth } from '@/auth/use-auth'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -29,30 +26,17 @@ const colors = [
 ]
 
 function DashboardPage() {
-  const { logout } = useAuth()
-
   return (
-    <main className="mx-auto min-h-svh w-full max-w-6xl px-5 py-10 sm:px-8 sm:py-16">
+    <section className="mx-auto w-full max-w-6xl">
       <header className="mb-12 flex flex-col gap-6 border-b-2 border-border pb-8 sm:flex-row sm:items-end sm:justify-between">
         <div className="max-w-2xl">
-          <Badge className="mb-4">Sistema financeiro</Badge>
           <h1 className="text-4xl font-black tracking-[-0.06em] sm:text-6xl">
-            Fundamento visual.
+            Visão geral.
           </h1>
           <p className="mt-4 text-base font-medium text-muted-foreground sm:text-lg">
             Tailwind, shadcn/ui, ícones e notificações prontos para as primeiras
             telas contábeis.
           </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.18em]">
-            <span className="size-3 bg-positive" />
-            Claro ativo
-          </div>
-          <Button variant="outline" size="sm" onClick={logout}>
-            <LogOut aria-hidden="true" />
-            Sair
-          </Button>
         </div>
       </header>
 
@@ -168,7 +152,7 @@ function DashboardPage() {
           </Card>
         </section>
       </div>
-    </main>
+    </section>
   )
 }
 

@@ -1,4 +1,4 @@
-import { SessionLoader } from '@/components/session-loader'
+import { SessionLoader } from '@/app/session/components/session-loader'
 
 function SessionLoadingScreen() {
   return (

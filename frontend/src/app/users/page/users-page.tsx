@@ -1,22 +1,22 @@
-import { PencilLine, Plus, Power, UsersRound } from 'lucide-react'
-import { DeactivateUserDialog } from '@/app/users/components/deactivate-user-dialog'
-import { UserFormModal } from '@/app/users/components/user-form-modal'
-import { useUsersViewModel } from '@/app/users/view-model/use-users-view-model'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { PencilLine, Plus, Power, UsersRound } from "lucide-react";
+import { DeactivateUserDialog } from "@/app/users/components/deactivate-user-dialog";
+import { UserFormModal } from "@/app/users/components/user-form-modal";
+import { useUsersViewModel } from "@/app/users/view-model/use-users-view-model";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 function formatCreationDate(value: string) {
-  const date = new Date(value)
+  const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
-    return 'Data indisponível'
+    return "Data indisponível";
   }
 
-  return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'medium' }).format(date)
+  return new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" }).format(date);
 }
 
 function UsersPage() {
-  const usersViewModel = useUsersViewModel()
+  const usersViewModel = useUsersViewModel();
   const {
     modal,
     page,
@@ -25,7 +25,7 @@ function UsersPage() {
     usersError,
     usersMetadata,
     usersQuery,
-  } = usersViewModel
+  } = usersViewModel;
 
   return (
     <section className="mx-auto w-full max-w-6xl">
@@ -38,7 +38,8 @@ function UsersPage() {
             Cadastro de usuários.
           </h1>
           <p className="mt-4 text-base font-medium text-muted-foreground sm:text-lg">
-            Gerencie os acessos ativos e mantenha o histórico de usuários inativados.
+            Gerencie os acessos ativos e mantenha o histórico de usuários
+            inativados.
           </p>
         </div>
         <Button onClick={usersViewModel.openCreateModal} size="lg">
@@ -53,16 +54,22 @@ function UsersPage() {
       >
         <div className="flex flex-col gap-2 border-b-2 border-border p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div>
-            <h2 id="users-table-title" className="text-2xl font-black tracking-tight">
+            <h2
+              id="users-table-title"
+              className="text-2xl font-black tracking-tight"
+            >
               Usuários cadastrados
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
               {usersMetadata
-                ? `${usersMetadata.total} usuário${usersMetadata.total === 1 ? '' : 's'} no histórico.`
-                : 'Carregando histórico.'}
+                ? `${usersMetadata.total} usuário${usersMetadata.total === 1 ? "" : "s"} no histórico.`
+                : "Carregando histórico."}
             </p>
           </div>
-          <UsersRound aria-hidden="true" className="size-7 text-muted-foreground" />
+          <UsersRound
+            aria-hidden="true"
+            className="size-7 text-muted-foreground"
+          />
         </div>
 
         {usersQuery.isLoading ? (
@@ -86,7 +93,7 @@ function UsersPage() {
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[47.5rem] text-left">
+              <table className="w-full min-w-190 text-left">
                 <thead className="bg-secondary text-xs font-black uppercase tracking-[0.12em] text-secondary-foreground">
                   <tr>
                     <th className="px-5 py-4">Ações</th>
@@ -98,47 +105,56 @@ function UsersPage() {
                 </thead>
                 <tbody>
                   {users.map((user) => (
-                    <tr key={user.id} className="border-t-2 border-border align-middle">
-                        <td className="px-5 py-4">
-                          <div className="flex flex-wrap gap-2">
-                            {usersViewModel.canEditUser(user) ? (
-                              <Button
-                                aria-label={`Editar ${user.nome}`}
-                                onClick={() => usersViewModel.openEditModal(user)}
-                                size="sm"
-                                variant="outline"
-                              >
-                                <PencilLine aria-hidden="true" />
-                                Editar
-                              </Button>
-                            ) : null}
-                            {user.isActive ? (
-                              <Button
-                                aria-label={`Inativar ${user.nome}`}
-                                disabled={
-                                  !usersViewModel.canDeactivateUser(user) ||
-                                  usersViewModel.isDeactivating
-                                }
-                                onClick={() => usersViewModel.requestDeactivation(user)}
-                                size="sm"
-                                variant="destructive"
-                              >
-                                <Power aria-hidden="true" />
-                                Inativar
-                              </Button>
-                            ) : null}
-                          </div>
-                        </td>
-                        <td className="px-5 py-4 font-bold">{user.nome}</td>
-                        <td className="px-5 py-4 text-muted-foreground">{user.email}</td>
-                        <td className="px-5 py-4 text-muted-foreground">
-                          {formatCreationDate(user.createDate)}
-                        </td>
-                        <td className="px-5 py-4">
-                          <Badge variant={user.isActive ? 'positive' : 'secondary'}>
-                            {user.isActive ? 'Ativo' : 'Inativo'}
-                          </Badge>
-                        </td>
+                    <tr
+                      key={user.id}
+                      className="border-t-2 border-border align-middle"
+                    >
+                      <td className="px-5 py-4">
+                        <div className="flex flex-wrap gap-2">
+                          {usersViewModel.canEditUser(user) ? (
+                            <Button
+                              aria-label={`Editar ${user.nome}`}
+                              onClick={() => usersViewModel.openEditModal(user)}
+                              size="sm"
+                              variant="outline"
+                            >
+                              <PencilLine aria-hidden="true" />
+                              Editar
+                            </Button>
+                          ) : null}
+                          {user.isActive ? (
+                            <Button
+                              aria-label={`Inativar ${user.nome}`}
+                              disabled={
+                                !usersViewModel.canDeactivateUser(user) ||
+                                usersViewModel.isDeactivating
+                              }
+                              onClick={() =>
+                                usersViewModel.requestDeactivation(user)
+                              }
+                              size="sm"
+                              variant="destructive"
+                            >
+                              <Power aria-hidden="true" />
+                              Inativar
+                            </Button>
+                          ) : null}
+                        </div>
+                      </td>
+                      <td className="px-5 py-4 font-bold">{user.nome}</td>
+                      <td className="px-5 py-4 text-muted-foreground">
+                        {user.email}
+                      </td>
+                      <td className="px-5 py-4 text-muted-foreground">
+                        {formatCreationDate(user.createDate)}
+                      </td>
+                      <td className="px-5 py-4">
+                        <Badge
+                          variant={user.isActive ? "positive" : "secondary"}
+                        >
+                          {user.isActive ? "Ativo" : "Inativo"}
+                        </Badge>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -152,14 +168,20 @@ function UsersPage() {
               <div className="flex gap-3">
                 <Button
                   disabled={page === 1 || usersQuery.isFetching}
-                  onClick={() => usersViewModel.setPage((currentPage) => currentPage - 1)}
+                  onClick={() =>
+                    usersViewModel.setPage((currentPage) => currentPage - 1)
+                  }
                   variant="outline"
                 >
                   Anterior
                 </Button>
                 <Button
-                  disabled={!usersMetadata?.hasNextPage || usersQuery.isFetching}
-                  onClick={() => usersViewModel.setPage((currentPage) => currentPage + 1)}
+                  disabled={
+                    !usersMetadata?.hasNextPage || usersQuery.isFetching
+                  }
+                  onClick={() =>
+                    usersViewModel.setPage((currentPage) => currentPage + 1)
+                  }
                   variant="outline"
                 >
                   Próxima
@@ -177,7 +199,7 @@ function UsersPage() {
           onClose={usersViewModel.closeModal}
           onSubmit={usersViewModel.saveUser}
           submissionError={usersViewModel.formSubmissionError}
-          user={modal.type === 'edit' ? modal.user : undefined}
+          user={modal.type === "edit" ? modal.user : undefined}
         />
       ) : null}
 
@@ -190,7 +212,7 @@ function UsersPage() {
         />
       ) : null}
     </section>
-  )
+  );
 }
 
-export { UsersPage }
+export { UsersPage };

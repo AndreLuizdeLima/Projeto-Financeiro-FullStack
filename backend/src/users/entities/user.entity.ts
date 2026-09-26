@@ -25,6 +25,9 @@ export class User {
   @Column({ length: 255 })
   passwordHash!: string;
 
+  @Column({ default: true })
+  isActive!: boolean;
+
   @CreateDateColumn()
   createDate!: Date;
 

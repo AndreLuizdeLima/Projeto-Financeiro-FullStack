@@ -15,7 +15,7 @@ function navigationItemClassName(variant: AppSidebarProps['variant']) {
         : 'h-full flex-1 flex-col px-2 py-2 text-[0.65rem]',
       isActive
         ? 'border-border bg-secondary text-secondary-foreground shadow-[3px_3px_0_var(--shadow-color)]'
-        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+        : 'text-muted-foreground hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-border hover:bg-accent hover:text-accent-foreground hover:shadow-[3px_3px_0_var(--shadow-color)]',
     )
 }
 

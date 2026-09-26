@@ -2,6 +2,7 @@ import { createBrowserRouter, Outlet, type RouteObject } from "react-router";
 import { LoginPage } from "@/app/auth/page/login-page";
 import { DashboardPage } from "@/app/dashboard/page/dashboard-page";
 import { AppLayoutPage } from "@/app/layout/page/app-layout-page";
+import { UsersPage } from "@/app/users/page/users-page";
 import { NotFoundPage } from "@/app/system/page/not-found-page";
 import { RouterErrorPage } from "@/app/system/page/router-error-page";
 import { ProtectedRoute, PublicRoute } from "@/routes/route-guards";
@@ -19,6 +20,10 @@ const routeDefinitions = {
       {
         index: true,
         element: <DashboardPage />,
+      },
+      {
+        path: routePaths.users,
+        element: <UsersPage />,
       },
     ],
   },

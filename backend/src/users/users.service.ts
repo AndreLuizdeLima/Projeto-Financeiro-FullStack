@@ -1,4 +1,6 @@
 import {
+  ConflictException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -10,6 +12,15 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { HashingService } from '@/auth/hashing/hashing.service';
 import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
+
+function getErrorCode(error: unknown): string | undefined {
+  if (typeof error !== 'object' || error === null || !('code' in error)) {
+    return undefined;
+  }
+
+  const { code } = error;
+  return typeof code === 'string' ? code : undefined;
+}
 
 @Injectable()
 export class UsersService {
@@ -28,12 +39,17 @@ export class UsersService {
         nome: createUserDto.nome,
         email: createUserDto.email,
         passwordHash,
+        isActive: true,
       });
       await this.userRepository.save(newUser);
       const { passwordHash: _passwordHash, ...userReturn } = newUser;
 
       return userReturn;
-    } catch {
+    } catch (error) {
+      if (getErrorCode(error) === '23505') {
+        throw new ConflictException('Já existe um usuário com este e-mail.');
+      }
+
       throw new InternalServerErrorException('Divergência ao criar usuário');
     }
   }
@@ -47,6 +63,7 @@ export class UsersService {
         id: true,
         nome: true,
         email: true,
+        isActive: true,
         createDate: true,
         updateDate: true,
       },
@@ -63,7 +80,17 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    const userData = await this.userRepository.findOne({ where: { id } });
+    const userData = await this.userRepository.findOne({
+      where: { id },
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        isActive: true,
+        createDate: true,
+        updateDate: true,
+      },
+    });
     if (!userData) {
       throw new NotFoundException('Usuário não encontrada.');
     }
@@ -73,29 +100,51 @@ export class UsersService {
   async update(id: number, updateUserDto: UpdateUserDto) {
     const { password, ...userData } = updateUserDto;
 
-    const user = await this.userRepository.preload({
-      id,
-      ...userData,
-    });
+    const user = await this.userRepository.preload({ id });
 
     if (!user) {
       throw new NotFoundException('Usuário não encontrada.');
     }
+
+    if (!user.isActive) {
+      throw new ForbiddenException('Não é permitido editar usuário inativo.');
+    }
+
+    Object.assign(user, userData);
 
     if (password) {
       user.passwordHash = await this.hashingService.hash(password);
     }
 
-    const { passwordHash: _passwordHash, ...userReturn } =
-      await this.userRepository.save(user);
-    return userReturn;
+    try {
+      const { passwordHash: _passwordHash, ...userReturn } =
+        await this.userRepository.save(user);
+      return userReturn;
+    } catch (error) {
+      if (getErrorCode(error) === '23505') {
+        throw new ConflictException('Já existe um usuário com este e-mail.');
+      }
+
+      throw new InternalServerErrorException(
+        'Divergência ao atualizar usuário',
+      );
+    }
   }
 
-  async remove(id: number) {
-    const user = await this.userRepository.findOneBy({ id });
+  async remove(id: number, authenticatedUserId: number) {
+    if (id === authenticatedUserId) {
+      throw new ForbiddenException(
+        'Não é permitido inativar o próprio usuário.',
+      );
+    }
+
+    const user = await this.userRepository.preload({ id, isActive: false });
     if (!user) {
       throw new NotFoundException('Usuário não encontrada.');
     }
-    return this.userRepository.remove(user);
+
+    const { passwordHash: _passwordHash, ...userReturn } =
+      await this.userRepository.save(user);
+    return userReturn;
   }
 }

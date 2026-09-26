@@ -1,4 +1,4 @@
-import { House, type LucideIcon } from 'lucide-react'
+import { House, UsersRound, type LucideIcon } from 'lucide-react'
 import { routePaths } from '@/routes/route-paths'
 
 type AppNavigationItem = {
@@ -14,6 +14,12 @@ const appNavigation: AppNavigationItem[] = [
     icon: House,
     route: routePaths.home,
     title: 'Visão geral',
+  },
+  {
+    name: 'Usuários',
+    icon: UsersRound,
+    route: routePaths.users,
+    title: 'Cadastro de usuários',
   },
 ]
 

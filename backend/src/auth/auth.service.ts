@@ -34,7 +34,10 @@ export class AuthService {
       throw new UnauthorizedException('Credenciais inválidas.');
     }
 
-    const user = await this.userRepository.findOneBy({ email: loginDto.email });
+    const user = await this.userRepository.findOneBy({
+      email: loginDto.email,
+      isActive: true,
+    });
 
     if (
       !user ||
@@ -59,12 +62,17 @@ export class AuthService {
         throw new UnauthorizedException('Refresh token inválido.');
       }
 
+      const user = await this.userRepository.findOneBy({
+        id: payload.sub,
+        isActive: true,
+      });
+
+      if (!user) {
+        throw new UnauthorizedException('Refresh token inválido.');
+      }
+
       return {
-        accessToken: await this.createToken(
-          payload.sub,
-          payload.email,
-          'access',
-        ),
+        accessToken: await this.createToken(user.id, user.email, 'access'),
       };
     } catch {
       throw new UnauthorizedException('Refresh token inválido.');

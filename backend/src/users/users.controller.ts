@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  Req,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -14,6 +15,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
+import type { AuthenticatedRequest } from '@/auth/guards/jwt-auth.guard';
 import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
 
 @UseGuards(JwtAuthGuard)
@@ -22,7 +24,10 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  create(
+    @Body(new ValidationPipe({ transform: true, whitelist: true }))
+    createUserDto: CreateUserDto,
+  ) {
     return this.usersService.create(createUserDto);
   }
 
@@ -40,12 +45,16 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @Param('id') id: string,
+    @Body(new ValidationPipe({ transform: true, whitelist: true }))
+    updateUserDto: UpdateUserDto,
+  ) {
     return this.usersService.update(Number(id), updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(Number(id));
+  remove(@Param('id') id: string, @Req() request: AuthenticatedRequest) {
+    return this.usersService.remove(Number(id), request.user!.sub);
   }
 }

@@ -66,12 +66,12 @@ function Toaster() {
             if (!open) dismissToast(item.id)
           }}
           className={cn(
-            'group pointer-events-auto relative grid w-full grid-cols-[1fr_auto] gap-x-6 overflow-hidden border-2 border-border p-4 shadow-[4px_4px_0_var(--shadow-color)] transition-all',
+            'group pointer-events-auto relative grid w-full grid-cols-[1fr_auto] gap-x-6 overflow-hidden rounded-md border border-border p-4',
             toastStyles[item.variant],
           )}
         >
           <div className="grid gap-1">
-            <ToastPrimitive.Title className="text-sm font-black">
+            <ToastPrimitive.Title className="text-sm font-semibold">
               {item.title}
             </ToastPrimitive.Title>
             {item.description ? (
@@ -81,7 +81,7 @@ function Toaster() {
             ) : null}
           </div>
           <ToastPrimitive.Close
-            className="size-6 opacity-80 outline-none transition-opacity hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="size-6 rounded-sm outline-none transition-colors hover:bg-foreground/10 focus-visible:outline-2 focus-visible:outline-offset-2"
             aria-label="Fechar notificação"
           >
             <X className="size-4" aria-hidden="true" />

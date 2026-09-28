@@ -14,11 +14,11 @@ function RouterErrorPage() {
   return (
     <main className="grid min-h-svh place-items-center px-5 py-10 sm:px-8">
       <Card className="w-full max-w-lg">
-        <CardHeader className="border-b-2 border-border">
+        <CardHeader className="border-b border-border">
           <p className="font-mono text-sm font-bold tracking-[0.18em] text-destructive">
             ERRO NA APLICAÇÃO
           </p>
-          <CardTitle className="mt-3 text-4xl font-black tracking-tighter">
+          <CardTitle className="mt-3 text-4xl font-semibold tracking-tight">
             Não foi possível carregar esta tela.
           </CardTitle>
           <CardDescription className="mt-3 text-base leading-6">

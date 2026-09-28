@@ -29,10 +29,10 @@ function DeactivateUserDialog({
         aria-describedby="deactivate-user-description"
         aria-labelledby="deactivate-user-title"
         aria-modal="true"
-        className="w-full max-w-md border-2 border-border bg-card shadow-[6px_6px_0_var(--shadow-color)]"
+        className="w-full max-w-md rounded-lg border border-border bg-card"
         role="alertdialog"
       >
-        <header className="flex items-start justify-between gap-5 border-b-2 border-border p-5 sm:p-6">
+        <header className="flex items-start justify-between gap-5 border-b border-border p-5 sm:p-6">
           <div>
             <div className="flex items-center gap-2 text-warning">
               <AlertTriangle aria-hidden="true" className="size-5" />
@@ -40,7 +40,7 @@ function DeactivateUserDialog({
                 Confirmação
               </span>
             </div>
-            <h2 id="deactivate-user-title" className="mt-3 text-2xl font-black tracking-tight">
+            <h2 id="deactivate-user-title" className="mt-3 text-2xl font-semibold tracking-tight">
               Inativar usuário?
             </h2>
           </div>

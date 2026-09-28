@@ -75,9 +75,9 @@ function LoginPage() {
   return (
     <main className="grid min-h-svh place-items-center px-5 py-10 sm:px-8">
       <Card className="w-full max-w-md">
-        <CardHeader className="border-b-2 border-border">
+        <CardHeader className="border-b border-border">
           <Badge className="mb-4 w-fit">Sistema financeiro</Badge>
-          <CardTitle className="text-4xl font-black tracking-tighter">
+          <CardTitle className="text-4xl font-semibold tracking-tight">
             Acesse sua conta.
           </CardTitle>
           <CardDescription className="mt-3 text-base leading-6">
@@ -127,7 +127,7 @@ function LoginPage() {
 
             {loginMutation.isError ? (
               <p
-                className="border-2 border-destructive bg-destructive px-3 py-2 text-sm font-bold text-destructive-foreground"
+                className="rounded-md border border-destructive bg-destructive px-3 py-2 text-sm font-semibold text-destructive-foreground"
                 role="alert"
               >
                 {getLoginErrorMessage(loginMutation.error)}

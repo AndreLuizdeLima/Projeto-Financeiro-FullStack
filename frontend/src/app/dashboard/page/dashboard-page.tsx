@@ -17,37 +17,47 @@ import {
 import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/toast'
 
-const colors = [
-  { name: 'Base', value: 'bg-background text-foreground', label: 'Fundo' },
-  { name: 'Primary', value: 'bg-primary text-primary-foreground', label: 'Ação' },
-  { name: 'Positive', value: 'bg-positive text-positive-foreground', label: 'Receita' },
-  { name: 'Warning', value: 'bg-warning text-warning-foreground', label: 'Atenção' },
-  { name: 'Destructive', value: 'bg-destructive text-destructive-foreground', label: 'Erro' },
+const statusSignals = [
+  {
+    name: 'Concluído',
+    value: 'bg-positive text-positive-foreground',
+    label: 'Confirma que uma operação foi registrada.',
+  },
+  {
+    name: 'Em atenção',
+    value: 'bg-warning text-warning-foreground',
+    label: 'Indica um item que precisa de conferência.',
+  },
+  {
+    name: 'Impedimento',
+    value: 'bg-destructive text-destructive-foreground',
+    label: 'Sinaliza uma falha que exige correção.',
+  },
 ]
 
 function DashboardPage() {
   return (
     <section className="mx-auto w-full max-w-6xl">
-      <header className="mb-12 flex flex-col gap-6 border-b-2 border-border pb-8 sm:flex-row sm:items-end sm:justify-between">
+      <header className="mb-10 flex flex-col gap-6 border-b border-border pb-8 sm:flex-row sm:items-end sm:justify-between">
         <div className="max-w-2xl">
-          <h1 className="text-4xl font-black tracking-[-0.06em] sm:text-6xl">
-            Visão geral.
+          <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+            Visão geral
           </h1>
           <p className="mt-4 text-base font-medium text-muted-foreground sm:text-lg">
-            Tailwind, shadcn/ui, ícones e notificações prontos para as primeiras
-            telas contábeis.
+            Acompanhe os principais indicadores e acesse as ações da operação
+            financeira.
           </p>
         </div>
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-        <section className="space-y-8" aria-labelledby="components-title">
+        <section className="space-y-8" aria-labelledby="actions-title">
           <div>
-            <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
-              Componentes
+            <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              Operação
             </p>
-            <h2 id="components-title" className="mt-2 text-2xl font-black tracking-tight">
-              Ações e feedback
+            <h2 id="actions-title" className="mt-2 text-2xl font-semibold tracking-tight">
+              Ações rápidas
             </h2>
           </div>
 
@@ -90,11 +100,11 @@ function DashboardPage() {
           </div>
 
           <Card>
-            <CardHeader className="border-b-2 border-border">
+            <CardHeader className="border-b border-border">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <CardDescription>Saldo consolidado</CardDescription>
-                  <CardTitle className="mt-2 text-4xl font-black tracking-tight">
+                  <CardTitle className="mt-2 text-4xl font-semibold tracking-tight">
                     R$ 24.850,90
                   </CardTitle>
                 </div>
@@ -103,10 +113,10 @@ function DashboardPage() {
             </CardHeader>
             <CardContent className="flex flex-col gap-5 pt-6 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                   Variação mensal
                 </p>
-                <p className="mt-1 text-lg font-black text-positive">+ 12,4%</p>
+                <p className="mt-1 text-lg font-semibold text-positive">+ 12,4%</p>
               </div>
               <Button variant="outline" size="sm">
                 <Landmark aria-hidden="true" />
@@ -123,30 +133,35 @@ function DashboardPage() {
           </div>
         </section>
 
-        <section aria-labelledby="tokens-title">
+        <section aria-labelledby="signals-title">
           <Card className="h-full">
-            <CardHeader className="border-b-2 border-border">
-              <CardDescription>Tokens semânticos</CardDescription>
-              <CardTitle id="tokens-title" className="text-2xl font-black tracking-tight">
-                Preto, branco e sinal.
+            <CardHeader className="border-b border-border">
+              <CardDescription>Sinalização operacional</CardDescription>
+              <CardTitle id="signals-title" className="text-2xl font-semibold tracking-tight">
+                Estados que exigem contexto
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 pt-6">
-              {colors.map((color) => (
+              {statusSignals.map((signal) => (
                 <div
-                  key={color.name}
-                  className="flex items-center justify-between border-2 border-border p-3"
+                  key={signal.name}
+                  className="flex items-center justify-between rounded-md border border-border p-4"
                 >
                   <div>
-                    <p className="font-bold">{color.name}</p>
-                    <p className="text-sm text-muted-foreground">{color.label}</p>
+                    <p className="font-semibold">{signal.name}</p>
+                    <p className="mt-1 text-sm leading-5 text-muted-foreground">
+                      {signal.label}
+                    </p>
                   </div>
-                  <span className={`size-10 border-2 border-border ${color.value}`} />
+                  <span
+                    aria-hidden="true"
+                    className={`size-8 rounded-md ${signal.value}`}
+                  />
                 </div>
               ))}
               <p className="pt-2 text-sm leading-6 text-muted-foreground">
-                A cor só comunica estado: verde para positivo, âmbar para atenção
-                e vermelho para erro.
+                A cor comunica somente o estado da operação: sucesso, atenção
+                ou erro.
               </p>
             </CardContent>
           </Card>

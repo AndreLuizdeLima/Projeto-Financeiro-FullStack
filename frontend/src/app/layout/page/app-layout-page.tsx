@@ -10,7 +10,7 @@ function AppLayoutPage() {
 
   return (
     <div className="grid h-svh overflow-hidden grid-rows-[auto_minmax(0,1fr)_auto] bg-background md:grid-cols-[7rem_minmax(0,1fr)] md:grid-rows-[auto_minmax(0,1fr)]">
-      <header className="z-20 flex min-h-18 flex-wrap items-center justify-between gap-4 border-b-2 border-border bg-card px-5 py-4 md:col-span-2 md:px-8">
+      <header className="z-20 flex min-h-18 flex-wrap items-center justify-between gap-4 border-b border-border bg-card px-5 py-4 md:col-span-2 md:px-8">
         <div className="flex items-center gap-3">
           <Landmark className="size-8" aria-hidden="true" />
           <div>
@@ -25,7 +25,7 @@ function AppLayoutPage() {
         </div>
       </header>
 
-      <aside className="hidden border-r-2 border-border bg-card md:block">
+      <aside className="hidden border-r border-border bg-card md:block">
         <AppSidebar variant="desktop" />
       </aside>
 

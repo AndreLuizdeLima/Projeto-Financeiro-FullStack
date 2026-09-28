@@ -7,7 +7,6 @@ function SessionLoader() {
         <span
           key={cell}
           className="session-loader__cell"
-          style={{ animationDelay: `${cell * 100}ms` }}
         />
       ))}
     </div>

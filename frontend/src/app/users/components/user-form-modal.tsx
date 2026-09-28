@@ -57,17 +57,17 @@ function UserFormModal({
       <section
         aria-labelledby="user-form-title"
         aria-modal="true"
-        className="w-full max-w-lg border-2 border-border bg-card shadow-[6px_6px_0_var(--shadow-color)]"
+        className="w-full max-w-lg rounded-lg border border-border bg-card"
         role="dialog"
       >
-        <header className="flex items-start justify-between gap-5 border-b-2 border-border p-5 sm:p-6">
+        <header className="flex items-start justify-between gap-5 border-b border-border p-5 sm:p-6">
           <div>
             <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
               Cadastro de usuários
             </p>
             <h2
               id="user-form-title"
-              className="mt-2 text-2xl font-black tracking-tight"
+              className="mt-2 text-2xl font-semibold tracking-tight"
             >
               {title}
             </h2>
@@ -171,14 +171,14 @@ function UserFormModal({
 
           {form.validationError || submissionError ? (
             <p
-              className="border-2 border-destructive bg-destructive px-3 py-2 text-sm font-bold text-destructive-foreground"
+              className="rounded-md border border-destructive bg-destructive px-3 py-2 text-sm font-semibold text-destructive-foreground"
               role="alert"
             >
               {form.validationError ?? submissionError}
             </p>
           ) : null}
 
-          <div className="flex flex-col-reverse gap-3 border-t-2 border-border pt-5 sm:flex-row sm:justify-end">
+          <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
             <Button
               disabled={isSaving}
               onClick={onClose}

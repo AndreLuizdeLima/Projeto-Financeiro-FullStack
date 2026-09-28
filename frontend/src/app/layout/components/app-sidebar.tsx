@@ -9,13 +9,13 @@ type AppSidebarProps = {
 function navigationItemClassName(variant: AppSidebarProps['variant']) {
   return ({ isActive }: { isActive: boolean }) =>
     cn(
-      'flex items-center justify-center gap-2 border-2 border-transparent font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+      'flex items-center justify-center gap-2 rounded-md border border-transparent font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
       variant === 'desktop'
-        ? 'mx-3 flex-col px-2 py-3 text-center text-xs'
-        : 'h-full flex-1 flex-col px-2 py-2 text-[0.65rem]',
+        ? 'mx-2 flex-col px-2 py-3 text-center text-xs'
+        : 'h-full min-w-22 flex-1 flex-col px-2 py-2 text-[0.65rem]',
       isActive
-        ? 'border-border bg-secondary text-secondary-foreground shadow-[3px_3px_0_var(--shadow-color)]'
-        : 'text-muted-foreground hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-border hover:bg-accent hover:text-accent-foreground hover:shadow-[3px_3px_0_var(--shadow-color)]',
+        ? 'border-border bg-secondary text-secondary-foreground'
+        : 'text-muted-foreground hover:border-border hover:bg-accent hover:text-accent-foreground',
     )
 }
 
@@ -38,7 +38,7 @@ function AppSidebar({ variant }: AppSidebarProps) {
       className={cn(
         isDesktop
           ? 'hidden h-full flex-col py-4 md:flex'
-          : 'z-40 flex h-18 border-t-2 border-border bg-card md:hidden',
+          : 'z-40 flex h-18 overflow-x-auto border-t border-border bg-card md:hidden',
       )}
       aria-label="Navegação principal"
     >

@@ -29,12 +29,12 @@ function UsersPage() {
 
   return (
     <section className="mx-auto w-full max-w-6xl">
-      <header className="mb-8 flex flex-col gap-6 border-b-2 border-border pb-8 sm:flex-row sm:items-end sm:justify-between">
+      <header className="mb-8 flex flex-col gap-6 border-b border-border pb-8 sm:flex-row sm:items-end sm:justify-between">
         <div className="max-w-2xl">
           <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
             Administração
           </p>
-          <h1 className="mt-2 text-4xl font-black tracking-[-0.06em] sm:text-6xl">
+          <h1 className="mt-2 text-4xl font-semibold tracking-tight sm:text-5xl">
             Cadastro de usuários.
           </h1>
           <p className="mt-4 text-base font-medium text-muted-foreground sm:text-lg">
@@ -50,13 +50,13 @@ function UsersPage() {
 
       <section
         aria-labelledby="users-table-title"
-        className="border-2 border-border bg-card shadow-[4px_4px_0_var(--shadow-color)]"
+        className="overflow-hidden rounded-lg border border-border bg-card"
       >
-        <div className="flex flex-col gap-2 border-b-2 border-border p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+        <div className="flex flex-col gap-2 border-b border-border p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div>
             <h2
               id="users-table-title"
-              className="text-2xl font-black tracking-tight"
+              className="text-2xl font-semibold tracking-tight"
             >
               Usuários cadastrados
             </h2>
@@ -85,7 +85,7 @@ function UsersPage() {
           </div>
         ) : users.length === 0 ? (
           <div className="p-10 text-center">
-            <p className="text-lg font-black">Nenhum usuário cadastrado.</p>
+            <p className="text-lg font-semibold">Nenhum usuário cadastrado.</p>
             <p className="mt-2 text-muted-foreground">
               Use “Novo usuário” para criar o primeiro acesso.
             </p>
@@ -94,7 +94,7 @@ function UsersPage() {
           <>
             <div className="overflow-x-auto">
               <table className="w-full min-w-190 text-left">
-                <thead className="bg-secondary text-xs font-black uppercase tracking-[0.12em] text-secondary-foreground">
+                <thead className="bg-secondary text-xs font-semibold uppercase tracking-widest text-secondary-foreground">
                   <tr>
                     <th className="px-5 py-4">Ações</th>
                     <th className="px-5 py-4">Nome</th>
@@ -107,7 +107,7 @@ function UsersPage() {
                   {users.map((user) => (
                     <tr
                       key={user.id}
-                      className="border-t-2 border-border align-middle"
+                      className="border-t border-border align-middle"
                     >
                       <td className="px-5 py-4">
                         <div className="flex flex-wrap gap-2">
@@ -161,7 +161,7 @@ function UsersPage() {
               </table>
             </div>
 
-            <footer className="flex flex-col gap-4 border-t-2 border-border p-5 sm:flex-row sm:items-center sm:justify-between">
+            <footer className="flex flex-col gap-4 border-t border-border p-5 sm:flex-row sm:items-center sm:justify-between">
               <p className="font-mono text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
                 Página {usersMetadata?.page ?? page}
               </p>

@@ -2,6 +2,7 @@ import { CentroDeCusto } from '@/centro-de-custo/entities/centro-de-custo.entity
 import { Cliente } from '@/cliente/entities/cliente.entity';
 import { ContaBancaria } from '@/conta-bancaria/entities/conta-bancaria.entity';
 import { FormasRecebimento } from '@/formas-recebimento/entities/formas-recebimento.entity';
+import { PlanoDeConta } from '@/plano-de-contas/entities/plano-de-conta.entity';
 import {
   Column,
   CreateDateColumn,
@@ -48,4 +49,7 @@ export class User {
 
   @OneToMany(() => ContaBancaria, (contabancaria) => contabancaria.criadoPor)
   contasBancariasCriados!: CentroDeCusto[];
+
+  @OneToMany(() => PlanoDeConta, (planodeConta) => planodeConta.criadoPor)
+  planosDeContaCriados!: CentroDeCusto[];
 }

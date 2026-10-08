@@ -25,3 +25,7 @@ Projeto Full Stack de **gestão financeira**, desenvolvido para aplicar regras d
 - [ ] Fluxo de caixa previsto
 - [ ] Fluxo de caixa realizado
 - [ ] Fechamento de períodos financeiros
+
+## Documentação
+
+- [Plano de contas: criação e atualização](backend/docs/plano-de-contas.md)

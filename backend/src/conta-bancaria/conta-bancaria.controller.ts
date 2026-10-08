@@ -46,7 +46,7 @@ export class ContaBancariaController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.contaBancariaService.findOne(+id);
+    return this.contaBancariaService.findOne(Number(id));
   }
 
   @Patch(':id')
@@ -54,11 +54,11 @@ export class ContaBancariaController {
     @Param('id') id: string,
     @Body() updateContaBancariaDto: UpdateContaBancariaDto,
   ) {
-    return this.contaBancariaService.update(+id, updateContaBancariaDto);
+    return this.contaBancariaService.update(Number(id), updateContaBancariaDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.contaBancariaService.remove(+id);
+    return this.contaBancariaService.remove(Number(id));
   }
 }

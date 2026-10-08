@@ -25,25 +25,25 @@ const appNavigation: AppNavigationItem[] = [
   },
 
   {
-    name: "Clientes",
+    name: "Cadastro de clientes",
     icon: Building2,
     route: routePaths.clientes,
     title: "Cadastro de clientes",
   },
   {
-    name: "Recebimentos",
+    name: "Formas de recebimento",
     icon: CircleDollarSign,
     route: routePaths.formasRecebimento,
     title: "Formas de recebimento",
   },
   {
-    name: "Centros",
+    name: "Centros de Custo",
     icon: ChartNoAxesColumnIncreasing,
     route: routePaths.centrosDeCusto,
     title: "Centros de custo",
   },
   {
-    name: "Contas",
+    name: "Cadastros de Contas",
     icon: Landmark,
     route: routePaths.contasBancarias,
     title: "Contas bancárias",

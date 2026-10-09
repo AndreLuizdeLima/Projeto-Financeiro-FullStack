@@ -53,7 +53,13 @@ export class PlanoDeContasController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body(new ValidationPipe({ transform: true, whitelist: true }))
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
     updatePlanoDeContaDto: UpdatePlanoDeContaDto,
   ) {
     return this.planoDeContasService.update(Number(id), updatePlanoDeContaDto);

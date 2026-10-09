@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import {
+  BadRequestException,
   NotFoundException,
   UnauthorizedException,
   UnprocessableEntityException,
+  ValidationPipe,
 } from '@nestjs/common';
+import { ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
 import {
-  FindOperator,
   type EntityManager,
   type FindManyOptions,
   type FindOneOptions,
@@ -15,6 +17,7 @@ import {
 import type { User } from '@/users/entities/user.entity';
 import type { AuthenticatedRequest } from '@/auth/guards/jwt-auth.guard';
 import { CreatePlanoDeContaDto } from './dto/create-plano-de-conta.dto';
+import { UpdatePlanoDeContaDto } from './dto/update-plano-de-conta.dto';
 import { NaturezaConta } from './dto/natureza-da-conta';
 import { TipoPlanoConta } from './dto/tipo-de-plano.enum';
 import type { PlanoDeConta } from './entities/plano-de-conta.entity';
@@ -65,11 +68,7 @@ describe('PlanoDeContasService', () => {
       typeof jest.fn<(dados: Partial<PlanoDeConta>) => PlanoDeConta>
     >;
     save: ReturnType<
-      typeof jest.fn<
-        (
-          dados: PlanoDeConta | PlanoDeConta[],
-        ) => Promise<PlanoDeConta | PlanoDeConta[]>
-      >
+      typeof jest.fn<(dados: PlanoDeConta) => Promise<PlanoDeConta>>
     >;
     manager: { transaction: ReturnType<typeof jest.fn> };
   };
@@ -120,6 +119,18 @@ describe('PlanoDeContasService', () => {
     return pai;
   }
 
+  function estado() {
+    return [...contas.values()].map((conta) => ({
+      id: conta.id,
+      codigo: conta.codigo,
+      nome: conta.nome,
+      tipo: conta.tipo,
+      natureza: conta.natureza,
+      contaPaiId: conta.contaPai?.id,
+      isActive: conta.isActive,
+    }));
+  }
+
   beforeEach(() => {
     contas = new Map();
     raiz = adicionar(101, '1', null);
@@ -138,33 +149,26 @@ describe('PlanoDeContasService', () => {
       find: jest.fn((options: FindManyOptions<PlanoDeConta>) => {
         const where = options.where as FindOptionsWhere<PlanoDeConta>;
         const { id } = where.contaPai as FindOptionsWhere<PlanoDeConta>;
-        const ids =
-          id instanceof FindOperator ? (id.value as unknown as number[]) : [id];
         return Promise.resolve(
           [...contas.values()]
-            .filter(
-              (conta) => conta.contaPai && ids.includes(conta.contaPai.id),
-            )
+            .filter((conta) => conta.contaPai?.id === id)
             .map(copiar),
         );
       }),
       create: jest.fn((dados: Partial<PlanoDeConta>) =>
         Object.assign(new EntidadePlano(), dados),
       ),
-      save: jest.fn((dados: PlanoDeConta | PlanoDeConta[]) => {
-        const lista = Array.isArray(dados) ? dados : [dados];
-        for (const conta of lista) {
-          if (!conta.id) conta.id = Math.max(...contas.keys()) + 1;
-          if (
-            [...contas.values()].some(
-              (outra) => outra.id !== conta.id && outra.codigo === conta.codigo,
-            )
-          ) {
-            throw new Error('Código duplicado');
-          }
-          contas.set(conta.id, copiar(conta));
+      save: jest.fn((conta: PlanoDeConta) => {
+        if (!conta.id) conta.id = Math.max(...contas.keys()) + 1;
+        if (
+          [...contas.values()].some(
+            (outra) => outra.id !== conta.id && outra.codigo === conta.codigo,
+          )
+        ) {
+          throw new Error('Código duplicado');
         }
-        return Promise.resolve(dados);
+        contas.set(conta.id, copiar(conta));
+        return Promise.resolve(conta);
       }),
       manager: {
         transaction: jest.fn(
@@ -234,6 +238,23 @@ describe('PlanoDeContasService', () => {
       select: { id: true },
     });
   });
+
+  it.each([
+    ['2', TipoPlanoConta.PASSIVO],
+    ['3', TipoPlanoConta.RECEITA],
+    ['4', TipoPlanoConta.DESPESA],
+  ] as const)(
+    'permite criar sob a raiz %s de tipo %s',
+    async (codigo, tipo) => {
+      const pai = adicionar(102, codigo, null);
+      pai.tipo = tipo;
+      expect(await service.create({ ...dto(pai.id), tipo }, 7)).toMatchObject({
+        codigo: `${codigo}.1`,
+        tipo,
+        contaPai: { id: pai.id },
+      });
+    },
+  );
 
   it('usa o maior número dos filhos diretos, incluindo inativos, e continua em 1.10', async () => {
     const filho = adicionar(201, '1.2');
@@ -312,6 +333,24 @@ describe('PlanoDeContasService', () => {
     );
   });
 
+  it('rejeita uma cadeia de ancestrais inconsistente sem salvar', async () => {
+    const pai = adicionar(201, '1.1');
+    const filho = adicionar(202, '1.1.1', pai);
+    pai.contaPai = filho;
+    await expect(service.create(dto(filho.id), 7)).rejects.toThrow(
+      UnprocessableEntityException,
+    );
+    expect(repository.save).not.toHaveBeenCalled();
+  });
+
+  it('rejeita códigos inconsistentes nos filhos diretos sem salvar', async () => {
+    adicionar(201, '1.1.1');
+    await expect(service.create(dto(raiz.id), 7)).rejects.toThrow(
+      UnprocessableEntityException,
+    );
+    expect(repository.save).not.toHaveBeenCalled();
+  });
+
   it('retorna 401 se o usuário autenticado não existe', async () => {
     buscarUsuario.mockResolvedValue(null);
     await expect(service.create(dto(raiz.id), 7)).rejects.toThrow(
@@ -331,96 +370,192 @@ describe('PlanoDeContasService', () => {
       },
     );
     expect(contas.get(202)?.codigo).toBe('1.7.1');
+    expect(repository.find).not.toHaveBeenCalled();
+    expect(repository.save).toHaveBeenCalledTimes(1);
   });
 
-  it('mantém o código quando o PATCH informa o mesmo pai', async () => {
-    const plano = adicionar(201, '1.7');
-    expect(
-      await service.update(plano.id, { contaPaiId: raiz.id }),
-    ).toMatchObject({ codigo: '1.7' });
+  it.each([
+    { contaPaiId: 101 }, // Mesmo pai.
+    { contaPaiId: 301 }, // Outro pai.
+    { contaPaiId: 201 }, // Própria conta.
+    { contaPaiId: 203 }, // Descendente.
+    { contaPaiId: null },
+    { contaPaiId: undefined },
+    { contaPai: { id: 101 } },
+    { contaPai: null },
+    { codigo: '1.1' }, // Mesmo código.
+    { codigo: '1.99' },
+    { codigo: null },
+  ])(
+    'rejeita pai ou código em chamada direta, sem alteração parcial: %j',
+    async (campos) => {
+      const plano = adicionar(201, '1.1');
+      const filho = adicionar(202, '1.1.1', plano);
+      adicionar(203, '1.1.1.1', filho);
+      adicionar(301, '1.2');
+      const antes = estado();
+      await expect(
+        service.update(plano.id, {
+          nome: 'Não deve salvar',
+          isActive: false,
+          ...campos,
+        }),
+      ).rejects.toThrow(UnprocessableEntityException);
+      expect(estado()).toEqual(antes);
+      expect(repository.save).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([null, 'false', 'true', 0, 1, {}, []])(
+    'rejeita status inválido em chamada direta sem salvar: %j',
+    async (isActive) => {
+      const plano = adicionar(201, '1.1');
+      const antes = estado();
+      await expect(
+        service.update(plano.id, {
+          nome: 'Não deve salvar',
+          isActive: isActive as boolean,
+        }),
+      ).rejects.toThrow(UnprocessableEntityException);
+      expect(estado()).toEqual(antes);
+      expect(repository.save).not.toHaveBeenCalled();
+    },
+  );
+
+  it('o pipe do PATCH no controller rejeita pai, código e status inválido com 400', async () => {
+    const argumentos = Reflect.getMetadata(
+      ROUTE_ARGS_METADATA,
+      PlanoDeContasController,
+      'update',
+    ) as Record<string, { index: number; pipes: ValidationPipe[] }>;
+    const pipe = Object.values(argumentos).find(({ index }) => index === 1)!
+      .pipes[0];
+    for (const campos of [
+      { contaPaiId: 101 },
+      { contaPaiId: 301 },
+      { codigo: '1.1' },
+      { isActive: null },
+      { isActive: 'false' },
+    ]) {
+      await expect(
+        pipe.transform(
+          { nome: 'Não deve salvar', ...campos },
+          { type: 'body', metatype: UpdatePlanoDeContaDto },
+        ),
+      ).rejects.toThrow(BadRequestException);
+    }
+    expect(repository.save).not.toHaveBeenCalled();
   });
 
-  it('troca o pai e recodifica toda a subárvore, preservando os outros ramos', async () => {
-    const paiAnterior = adicionar(201, '1.1');
-    const plano = adicionar(202, '1.1.1', paiAnterior);
-    const filho = adicionar(203, '1.1.1.1', plano);
-    adicionar(204, '1.1.1.1.1', filho);
-    adicionar(205, '1.1.2', paiAnterior);
-    const novoPai = adicionar(206, '1.2');
-    adicionar(207, '1.2.9', novoPai);
-
-    expect(
-      await service.update(plano.id, { contaPaiId: novoPai.id }),
-    ).toMatchObject({
-      codigo: '1.2.10',
-      contaPai: { id: novoPai.id },
-    });
-    expect(contas.get(203)?.codigo).toBe('1.2.10.1');
-    expect(contas.get(204)?.codigo).toBe('1.2.10.1.1');
-    expect(contas.get(205)?.codigo).toBe('1.1.2');
-  });
-
-  it('rejeita a própria conta como pai', async () => {
+  it('permite editar tipo e nome junto ao status sem alterar a hierarquia', async () => {
     const plano = adicionar(201, '1.1');
-    await expect(
-      service.update(plano.id, { contaPaiId: plano.id }),
-    ).rejects.toThrow(UnprocessableEntityException);
+    adicionar(202, '1.1.1', plano);
+    expect(
+      await service.update(plano.id, {
+        nome: 'Novo nome',
+        tipo: TipoPlanoConta.DESPESA,
+        natureza: NaturezaConta.ANALITICA,
+        isActive: false,
+      }),
+    ).toMatchObject({
+      nome: 'Novo nome',
+      tipo: TipoPlanoConta.DESPESA,
+      natureza: NaturezaConta.ANALITICA,
+      isActive: false,
+      codigo: '1.1',
+      contaPai: { id: raiz.id },
+    });
+    expect(contas.get(202)).toMatchObject({
+      codigo: '1.1.1',
+      tipo: TipoPlanoConta.ATIVO,
+      isActive: true,
+      contaPai: { id: plano.id },
+    });
+    expect(repository.find).not.toHaveBeenCalled();
   });
 
-  it('rejeita um neto como novo pai', async () => {
+  it('permite inativar e reativar um pai sem mudar seus descendentes', async () => {
     const plano = adicionar(201, '1.1');
     const filho = adicionar(202, '1.1.1', plano);
-    const neto = adicionar(203, '1.1.1.1', filho);
-    await expect(
-      service.update(plano.id, { contaPaiId: neto.id }),
-    ).rejects.toThrow(UnprocessableEntityException);
-    expect(repository.save).not.toHaveBeenCalled();
+    adicionar(203, '1.1.1.1', filho).isActive = false;
+    const antes = estado();
+    await service.update(plano.id, { isActive: false });
+    expect(estado()).toEqual(
+      antes.map((conta) =>
+        conta.id === plano.id ? { ...conta, isActive: false } : conta,
+      ),
+    );
+    await service.update(plano.id, { isActive: true });
+    expect(estado()).toEqual(antes);
+    expect(repository.find).not.toHaveBeenCalled();
   });
 
-  it('rejeita uma mudança de pai que colocaria um descendente no nível 11', async () => {
-    const novoPai = cadeia(9);
-    const plano = adicionar(201, '1.2');
-    adicionar(202, '1.2.1', plano);
-    await expect(
-      service.update(plano.id, { contaPaiId: novoPai.id }),
-    ).rejects.toThrow(UnprocessableEntityException);
-    expect(contas.get(plano.id)?.codigo).toBe('1.2');
-    expect(contas.get(202)?.codigo).toBe('1.2.1');
-    expect(repository.save).not.toHaveBeenCalled();
-  });
-
-  it('aceita mudança de pai que deixa o descendente no nível 10', async () => {
-    const novoPai = cadeia(8);
-    const plano = adicionar(201, '1.2');
-    adicionar(202, '1.2.1', plano);
-    await service.update(plano.id, { contaPaiId: novoPai.id });
-    expect(contas.get(202)?.codigo.split('.')).toHaveLength(10);
-  });
-
-  it('rejeita null como pai na edição', async () => {
+  it('preserva o status omitido e permite editar uma conta inativa', async () => {
     const plano = adicionar(201, '1.1');
-    await expect(
-      service.update(plano.id, { contaPaiId: null as unknown as number }),
-    ).rejects.toThrow(UnprocessableEntityException);
+    plano.isActive = false;
+    expect(
+      await service.update(plano.id, { tipo: TipoPlanoConta.DESPESA }),
+    ).toMatchObject({
+      nome: plano.nome,
+      tipo: TipoPlanoConta.DESPESA,
+      isActive: false,
+      codigo: '1.1',
+      contaPai: { id: raiz.id },
+    });
   });
 
   it('rejeita alteração de natureza de analítico para sintético', async () => {
     const plano = adicionar(201, '1.1');
     await expect(
-      service.update(plano.id, { natureza: NaturezaConta.SINTETICA }),
+      service.update(plano.id, {
+        nome: 'Não deve salvar',
+        isActive: false,
+        natureza: NaturezaConta.SINTETICA,
+      }),
     ).rejects.toThrow(UnprocessableEntityException);
+    expect(contas.get(plano.id)).toMatchObject({ nome: '1.1', isActive: true });
+    expect(repository.save).not.toHaveBeenCalled();
   });
 
   it('mantém as raízes sintéticas sem pai e com sua natureza e tipo originais', async () => {
-    await expect(service.update(raiz.id, { contaPaiId: 999 })).rejects.toThrow(
-      UnprocessableEntityException,
-    );
+    await expect(
+      service.update(raiz.id, {
+        nome: 'Não deve salvar',
+        contaPaiId: 999,
+      } as UpdatePlanoDeContaDto),
+    ).rejects.toThrow(UnprocessableEntityException);
     await expect(
       service.update(raiz.id, { natureza: NaturezaConta.ANALITICA }),
     ).rejects.toThrow(UnprocessableEntityException);
     await expect(
       service.update(raiz.id, { tipo: TipoPlanoConta.PASSIVO }),
     ).rejects.toThrow(UnprocessableEntityException);
+    expect(repository.save).not.toHaveBeenCalled();
+    expect(contas.get(raiz.id)).toMatchObject({
+      codigo: '1',
+      nome: '1',
+      contaPai: null,
+    });
+  });
+
+  it('permite editar o nome e o status de uma raiz sem afetar seus filhos', async () => {
+    adicionar(201, '1.1');
+    expect(
+      await service.update(raiz.id, {
+        nome: 'Ativos',
+        tipo: TipoPlanoConta.ATIVO,
+        natureza: NaturezaConta.SINTETICA,
+        isActive: false,
+      }),
+    ).toMatchObject({
+      nome: 'Ativos',
+      tipo: TipoPlanoConta.ATIVO,
+      natureza: NaturezaConta.SINTETICA,
+      isActive: false,
+      contaPai: null,
+      codigo: '1',
+    });
+    expect(contas.get(201)?.isActive).toBe(true);
   });
 
   it('retorna 404 ao editar uma conta inexistente', async () => {
@@ -448,13 +583,26 @@ describe('PlanoDeContasService', () => {
 
   it('inativa logicamente sem remover vínculos ou reutilizar o código', async () => {
     const plano = adicionar(201, '1.1');
+    const filho = adicionar(202, '1.1.1', plano);
+    const neto = adicionar(203, '1.1.1.1', filho);
+    neto.isActive = false;
+    const atualizar = jest.spyOn(service, 'update');
+    const antes = estado();
     await service.remove(plano.id);
-    expect(contas.get(plano.id)).toMatchObject({
-      isActive: false,
-      codigo: '1.1',
-    });
+    expect(atualizar).toHaveBeenCalledWith(plano.id, { isActive: false });
+    expect(estado()).toEqual(
+      antes.map((conta) =>
+        conta.id === plano.id ? { ...conta, isActive: false } : conta,
+      ),
+    );
+    expect(repository.find).not.toHaveBeenCalled();
     expect(await service.create(dto(raiz.id), 7)).toMatchObject({
       codigo: '1.2',
     });
+  });
+
+  it('retorna 404 ao inativar uma conta inexistente', async () => {
+    await expect(service.remove(999)).rejects.toThrow(NotFoundException);
+    expect(repository.save).not.toHaveBeenCalled();
   });
 });

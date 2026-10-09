@@ -7,6 +7,11 @@ import { TipoPlanoConta } from './dto/tipo-de-plano.enum';
 
 describe('Validação dos DTOs de plano de contas', () => {
   const pipe = new ValidationPipe({ transform: true, whitelist: true });
+  const patchPipe = new ValidationPipe({
+    transform: true,
+    whitelist: true,
+    forbidNonWhitelisted: true,
+  });
   const criacao = {
     nome: 'Estoque',
     tipo: TipoPlanoConta.ATIVO,
@@ -38,20 +43,73 @@ describe('Validação dos DTOs de plano de contas', () => {
   });
 
   it('aceita PATCH parcial sem pai informado', async () => {
-    const resultado = (await pipe.transform(
+    const resultado = (await patchPipe.transform(
       { nome: 'Novo nome' },
       { type: 'body', metatype: UpdatePlanoDeContaDto },
     )) as UpdatePlanoDeContaDto;
     expect(resultado.nome).toBe('Novo nome');
-    expect(resultado.contaPaiId).toBeUndefined();
+    expect(resultado).not.toHaveProperty('contaPaiId');
+    expect(resultado.isActive).toBeUndefined();
   });
 
-  it.each([null, 0, -1, 1.5, '101'])(
-    'rejeita contaPaiId inválido na edição: %s',
+  it.each([101, 301, null, 0, -1, 1.5, '101'])(
+    'rejeita contaPaiId na edição, mesmo válido: %s',
     async (contaPaiId) => {
       await expect(
-        pipe.transform(
+        patchPipe.transform(
           { contaPaiId },
+          { type: 'body', metatype: UpdatePlanoDeContaDto },
+        ),
+      ).rejects.toThrow(BadRequestException);
+    },
+  );
+
+  it.each([
+    { codigo: '1.1' },
+    { contaPai: { id: 101 } },
+    { criadoPor: { id: 7 } },
+    { campoDesconhecido: true },
+  ])('rejeita campos fora do contrato de edição: %j', async (campos) => {
+    await expect(
+      patchPipe.transform(
+        { nome: 'Novo nome', ...campos },
+        { type: 'body', metatype: UpdatePlanoDeContaDto },
+      ),
+    ).rejects.toThrow(BadRequestException);
+  });
+
+  it.each([true, false])(
+    'aceita PATCH contendo somente isActive: %s',
+    async (isActive) => {
+      const resultado = (await patchPipe.transform(
+        { isActive },
+        { type: 'body', metatype: UpdatePlanoDeContaDto },
+      )) as UpdatePlanoDeContaDto;
+      expect(resultado.isActive).toBe(isActive);
+      expect(resultado.nome).toBeUndefined();
+      expect(resultado.tipo).toBeUndefined();
+      expect(resultado.natureza).toBeUndefined();
+    },
+  );
+
+  it.each([null, 'false', 'true', 0, 1, {}, []])(
+    'rejeita status não booleano na edição: %j',
+    async (isActive) => {
+      await expect(
+        patchPipe.transform(
+          { nome: 'Novo nome', isActive },
+          { type: 'body', metatype: UpdatePlanoDeContaDto },
+        ),
+      ).rejects.toThrow(BadRequestException);
+    },
+  );
+
+  it.each(['nome', 'tipo', 'natureza'])(
+    'rejeita null no campo %s da edição',
+    async (campo) => {
+      await expect(
+        patchPipe.transform(
+          { [campo]: null },
           { type: 'body', metatype: UpdatePlanoDeContaDto },
         ),
       ).rejects.toThrow(BadRequestException);

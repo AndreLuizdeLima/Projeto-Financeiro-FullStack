@@ -7,7 +7,7 @@ import {
 import { CreatePlanoDeContaDto } from './dto/create-plano-de-conta.dto';
 import { UpdatePlanoDeContaDto } from './dto/update-plano-de-conta.dto';
 import { PlanoDeConta } from './entities/plano-de-conta.entity';
-import { In, Repository, type EntityManager } from 'typeorm';
+import { Repository, type EntityManager } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
 import { NaturezaConta } from './dto/natureza-da-conta';
@@ -15,8 +15,11 @@ import { User } from '@/users/entities/user.entity';
 import {
   CODIGOS_RAIZ,
   MAX_NIVEIS_PLANO_DE_CONTAS,
-  MAX_TAMANHO_CODIGO_PLANO_DE_CONTAS,
 } from './plano-de-contas.constants';
+import {
+  calcularProximoCodigo,
+  extrairNumeroDoFilho,
+} from './utils/calcular-proximo-codigo';
 
 @Injectable()
 export class PlanoDeContasService {
@@ -44,13 +47,20 @@ export class PlanoDeContasService {
 
       const { pai, nivel } = await this.validarPai(repository, dto.contaPaiId);
       this.validarNivel(nivel + 1);
+      const filhos = await repository.find({
+        where: { contaPai: { id: pai.id } },
+        select: { codigo: true },
+      });
 
       const plano = repository.create({
         nome: dto.nome,
         tipo: dto.tipo,
         natureza: NaturezaConta.ANALITICA,
         contaPai: pai,
-        codigo: await this.proximoCodigo(repository, pai),
+        codigo: calcularProximoCodigo(
+          pai.codigo,
+          filhos.map((filho) => filho.codigo),
+        ),
         criadoPor,
         isActive: true,
       });
@@ -87,6 +97,22 @@ export class PlanoDeContasService {
   }
 
   async update(id: number, dto: UpdatePlanoDeContaDto) {
+    if ('contaPaiId' in dto || 'contaPai' in dto || 'codigo' in dto) {
+      throw new UnprocessableEntityException(
+        'O pai e o código da conta não podem ser informados na edição.',
+      );
+    }
+    if (
+      [dto.nome, dto.tipo, dto.natureza, dto.isActive].some(
+        (valor) => valor === null,
+      ) ||
+      (dto.isActive !== undefined && typeof dto.isActive !== 'boolean')
+    ) {
+      throw new UnprocessableEntityException(
+        'Os campos não podem ser nulos e isActive deve ser booleano.',
+      );
+    }
+
     return this.emTransacao(async (repository) => {
       const plano = await repository.findOne({
         where: { id },
@@ -113,62 +139,16 @@ export class PlanoDeContasService {
         );
       }
 
-      let contasParaSalvar = [plano];
-
-      if (dto.contaPaiId !== undefined) {
-        if (plano.natureza === NaturezaConta.SINTETICA) {
-          throw new UnprocessableEntityException(
-            'Contas sintéticas devem permanecer na raiz, sem pai.',
-          );
-        }
-
-        const { pai, nivel } = await this.validarPai(
-          repository,
-          dto.contaPaiId,
-          id,
-        );
-        this.validarNivel(nivel + 1);
-
-        if (pai.id !== plano.contaPai?.id) {
-          const subarvore = await this.buscarSubarvore(repository, plano);
-          const codigoAnterior = plano.codigo;
-          const novoCodigo = await this.proximoCodigo(repository, pai);
-
-          const novosCodigos = subarvore.map(({ conta, nivelRelativo }) => {
-            this.validarNivel(nivel + 1 + nivelRelativo);
-            const codigo =
-              novoCodigo + conta.codigo.slice(codigoAnterior.length);
-            this.validarTamanhoCodigo(codigo);
-            return codigo;
-          });
-
-          contasParaSalvar = subarvore.map(({ conta }, index) => {
-            conta.codigo = novosCodigos[index];
-            return conta;
-          });
-          plano.contaPai = pai;
-        }
-      }
-
       if (dto.nome !== undefined) plano.nome = dto.nome;
       if (dto.tipo !== undefined) plano.tipo = dto.tipo;
+      if (dto.isActive !== undefined) plano.isActive = dto.isActive;
 
-      await repository.save(contasParaSalvar);
-      return plano;
+      return repository.save(plano);
     });
   }
 
   async remove(id: number) {
-    return this.emTransacao(async (repository) => {
-      const plano = await repository.findOne({ where: { id } });
-
-      if (!plano) {
-        throw new NotFoundException('Plano de contas não encontrado.');
-      }
-
-      plano.isActive = false;
-      return repository.save(plano);
-    });
+    return this.update(id, { isActive: false });
   }
 
   private async emTransacao<T>(
@@ -180,7 +160,7 @@ export class PlanoDeContasService {
     return this.planoDeContaRepository.manager.transaction(
       'READ COMMITTED',
       async (manager) => {
-        // Serializa cadastros e mudanças de pai para proteger códigos e vínculos.
+        // Serializa operações do módulo para proteger a sequência dos cadastros.
         await manager.query<void>(
           'SELECT pg_advisory_xact_lock(hashtext($1))',
           ['plano-de-contas:hierarquia'],
@@ -193,7 +173,6 @@ export class PlanoDeContasService {
   private async validarPai(
     repository: Repository<PlanoDeConta>,
     contaPaiId: number,
-    contaId?: number,
   ) {
     if (!Number.isInteger(contaPaiId) || contaPaiId < 1) {
       throw new UnprocessableEntityException(
@@ -213,10 +192,8 @@ export class PlanoDeContasService {
     let nivel = 1;
 
     while (true) {
-      if (atual.id === contaId || visitados.has(atual.id)) {
-        throw new UnprocessableEntityException(
-          'A conta não pode ter como pai ela mesma ou um de seus descendentes.',
-        );
+      if (visitados.has(atual.id)) {
+        throw new UnprocessableEntityException('A hierarquia contém um ciclo.');
       }
       visitados.add(atual.id);
       this.validarNivel(nivel);
@@ -236,7 +213,7 @@ export class PlanoDeContasService {
         );
       }
 
-      this.numeroDoFilho(atual.codigo, atual.contaPai.codigo);
+      extrairNumeroDoFilho(atual.codigo, atual.contaPai.codigo);
       const ancestral = await repository.findOne({
         where: { id: atual.contaPai.id },
         relations: { contaPai: true },
@@ -247,82 +224,10 @@ export class PlanoDeContasService {
     }
   }
 
-  private async proximoCodigo(
-    repository: Repository<PlanoDeConta>,
-    pai: PlanoDeConta,
-  ) {
-    const filhos = await repository.find({
-      where: { contaPai: { id: pai.id } },
-      select: { codigo: true },
-    });
-    const maiorNumero = filhos.reduce((maior, filho) => {
-      const numero = this.numeroDoFilho(filho.codigo, pai.codigo);
-      return numero > maior ? numero : maior;
-    }, 0n);
-    const codigo = `${pai.codigo}.${maiorNumero + 1n}`;
-    this.validarTamanhoCodigo(codigo);
-    return codigo;
-  }
-
-  private numeroDoFilho(codigo: string, codigoPai: string): bigint {
-    const prefixo = `${codigoPai}.`;
-    const numero = codigo.slice(prefixo.length);
-    if (!codigo.startsWith(prefixo) || !/^[1-9]\d*$/.test(numero)) {
-      throw new UnprocessableEntityException(
-        'O código da conta é incompatível com a hierarquia existente.',
-      );
-    }
-    return BigInt(numero);
-  }
-
-  private async buscarSubarvore(
-    repository: Repository<PlanoDeConta>,
-    plano: PlanoDeConta,
-  ) {
-    const subarvore = [{ conta: plano, nivelRelativo: 0 }];
-    const visitados = new Set([plano.id]);
-    let nivelAtual = [plano];
-    let nivelRelativo = 1;
-
-    while (nivelAtual.length) {
-      const filhos = await repository.find({
-        where: { contaPai: { id: In(nivelAtual.map((conta) => conta.id)) } },
-        relations: { contaPai: true },
-      });
-      for (const filho of filhos) {
-        if (visitados.has(filho.id) || !filho.contaPai) {
-          throw new UnprocessableEntityException(
-            'A hierarquia contém um ciclo.',
-          );
-        }
-        this.validarNivel(nivelRelativo + 1);
-        if (filho.natureza !== NaturezaConta.ANALITICA) {
-          throw new UnprocessableEntityException(
-            'Somente contas analíticas podem estar abaixo de outra conta.',
-          );
-        }
-        this.numeroDoFilho(filho.codigo, filho.contaPai.codigo);
-        visitados.add(filho.id);
-        subarvore.push({ conta: filho, nivelRelativo });
-      }
-      nivelAtual = filhos;
-      nivelRelativo += 1;
-    }
-    return subarvore;
-  }
-
   private validarNivel(nivel: number) {
     if (nivel > MAX_NIVEIS_PLANO_DE_CONTAS) {
       throw new UnprocessableEntityException(
         `O plano de contas permite no máximo ${MAX_NIVEIS_PLANO_DE_CONTAS} níveis, incluindo a raiz.`,
-      );
-    }
-  }
-
-  private validarTamanhoCodigo(codigo: string) {
-    if (codigo.length > MAX_TAMANHO_CODIGO_PLANO_DE_CONTAS) {
-      throw new UnprocessableEntityException(
-        'O código gerado excede o tamanho máximo permitido.',
       );
     }
   }

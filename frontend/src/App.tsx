@@ -1,8 +1,5 @@
-import { RouterProvider } from 'react-router'
-import { appRouter } from '@/routes/app-router'
-
 function App() {
-  return <RouterProvider router={appRouter} />
+  return <h1>Front sistema financeiro</h1>
 }
 
 export default App

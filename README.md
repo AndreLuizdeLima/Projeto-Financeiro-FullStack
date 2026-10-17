@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="designer/fluxo-logo-texto-descricao-branca.png" alt="Fluxo" width="360" />
+</p>
+
 # Projeto Financeiro Full Stack
 
 Projeto Full Stack de **gestão financeira**, desenvolvido para aplicar regras de negócio comuns em sistemas financeiros utilizando NestJS, React e PostgreSQL.
@@ -14,7 +18,7 @@ Projeto Full Stack de **gestão financeira**, desenvolvido para aplicar regras d
 - [ ] Contas a pagar
 - [ ] Contas a receber
 - [ ] Contas financeiras
-- [ ] Plano de contas
+- [x] Plano de contas
 - [ ] Centros de custo
 - [ ] Formas de pagamento e recebimento
 - [ ] Parcelamentos

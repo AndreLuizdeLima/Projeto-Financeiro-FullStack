@@ -1,7 +1,1 @@
-import { Entity, PrimaryGeneratedColumn } from 'typeorm';
-
-@Entity()
-export class Movimentacoe {
-  @PrimaryGeneratedColumn()
-  id!: number;
-}
+export { Movimento as Movimentacoe } from '@/financeiro/entities/movimento.entity';

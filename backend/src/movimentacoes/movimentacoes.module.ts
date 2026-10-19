@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { MovimentacoesService } from './movimentacoes.service';
+import { AuthModule } from '@/auth/auth.module';
+import { FinanceiroModule } from '@/financeiro/financeiro.module';
 import { MovimentacoesController } from './movimentacoes.controller';
-
 @Module({
+  imports: [AuthModule, FinanceiroModule],
   controllers: [MovimentacoesController],
-  providers: [MovimentacoesService],
 })
 export class MovimentacoesModule {}

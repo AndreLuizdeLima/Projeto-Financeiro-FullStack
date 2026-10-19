@@ -1,34 +1,66 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { MovimentacoesService } from './movimentacoes.service';
-import { CreateMovimentacoeDto } from './dto/create-movimentacoe.dto';
-import { UpdateMovimentacoeDto } from './dto/update-movimentacoe.dto';
-
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+import {
+  JwtAuthGuard,
+  type AuthenticatedRequest,
+} from '@/auth/guards/jwt-auth.guard';
+import { MovimentacoesService } from '@/financeiro/movimentacoes.service';
+import { SaldosService } from '@/financeiro/saldos.service';
+import { CreateMovimentoDto } from '@/financeiro/dto/create-movimento.dto';
+import { FiltroFinanceiroDto } from '@/financeiro/dto/filtro-financeiro.dto';
+@UseGuards(JwtAuthGuard)
+@UsePipes(
+  new ValidationPipe({
+    transform: true,
+    whitelist: true,
+    forbidNonWhitelisted: true,
+  }),
+)
 @Controller('movimentacoes')
 export class MovimentacoesController {
-  constructor(private readonly movimentacoesService: MovimentacoesService) {}
+  constructor(
+    private readonly service: MovimentacoesService,
+    private readonly saldosService: SaldosService,
+  ) {}
 
-  @Post()
-  create(@Body() createMovimentacoeDto: CreateMovimentacoeDto) {
-    return this.movimentacoesService.create(createMovimentacoeDto);
+  @Post() criar(
+    @Body() dto: CreateMovimentoDto,
+    @Req() r: AuthenticatedRequest,
+  ) {
+    return this.service.criarMovimento(dto, r.user!.sub);
   }
 
-  @Get()
-  findAll() {
-    return this.movimentacoesService.findAll();
+  @Get() listar(@Query() dto: FiltroFinanceiroDto) {
+    return this.service.listarMovimentos(dto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.movimentacoesService.findOne(+id);
+  @Get('saldos') saldos(@Query() dto: FiltroFinanceiroDto) {
+    return this.saldosService.saldos(dto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMovimentacoeDto: UpdateMovimentacoeDto) {
-    return this.movimentacoesService.update(+id, updateMovimentacoeDto);
+  @Get('resumo') resumo(@Query() dto: FiltroFinanceiroDto) {
+    return this.service.resumoMovimentos(dto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.movimentacoesService.remove(+id);
+  @Get(':id') obter(@Param('id', ParseIntPipe) id: number) {
+    return this.service.obterMovimento(id);
+  }
+
+  @Post(':id/estornar') estornar(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() r: AuthenticatedRequest,
+  ) {
+    return this.service.estornarMovimento(id, r.user!.sub);
   }
 }

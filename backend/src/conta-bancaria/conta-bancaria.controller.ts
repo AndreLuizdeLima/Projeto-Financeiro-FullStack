@@ -1,3 +1,5 @@
+import { SaldosService } from '@/financeiro/saldos.service';
+import { FiltroFinanceiroDto } from '@/financeiro/dto/filtro-financeiro.dto';
 import {
   Controller,
   Get,
@@ -23,7 +25,10 @@ import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
 @UseGuards(JwtAuthGuard)
 @Controller('conta-bancaria')
 export class ContaBancariaController {
-  constructor(private readonly contaBancariaService: ContaBancariaService) {}
+  constructor(
+    private readonly contaBancariaService: ContaBancariaService,
+    private readonly saldosService: SaldosService,
+  ) {}
 
   @Post()
   create(
@@ -42,6 +47,20 @@ export class ContaBancariaController {
     pagination: PaginationQueryDto,
   ) {
     return this.contaBancariaService.findAll(pagination);
+  }
+
+  @Get('saldos')
+  saldos(
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
+    dto: FiltroFinanceiroDto,
+  ) {
+    return this.saldosService.saldos(dto);
   }
 
   @Get(':id')

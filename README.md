@@ -15,17 +15,17 @@ Projeto Full Stack de **gestão financeira**, desenvolvido para aplicar regras d
 
 ## Funcionalidades implementadas
 
-- [ ] Contas a pagar
-- [ ] Contas a receber
-- [ ] Contas financeiras
+- [x] Contas a pagar
+- [x] Contas a receber
+- [x] Contas financeiras
 - [x] Plano de contas
-- [ ] Centros de custo
-- [ ] Formas de pagamento e recebimento
+- [x] Centros de custo
+- [x] Formas de pagamento e recebimento
 - [ ] Parcelamentos
 - [ ] Pagamentos e recebimentos parciais
-- [ ] Movimentações financeiras
-- [ ] Transferências entre contas
-- [ ] Estornos
+- [x] Movimentações financeiras
+- [x] Transferências entre contas
+- [x] Estornos
 - [ ] Fluxo de caixa previsto
 - [ ] Fluxo de caixa realizado
 - [ ] Fechamento de períodos financeiros

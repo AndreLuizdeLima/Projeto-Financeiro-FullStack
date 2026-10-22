@@ -11,6 +11,8 @@ import { FormasRecebimentoModule } from './formas-recebimento/formas-recebimento
 import { CentroDeCustoModule } from './centro-de-custo/centro-de-custo.module';
 import { ContaBancariaModule } from './conta-bancaria/conta-bancaria.module';
 import { PlanoDeContasModule } from './plano-de-contas/plano-de-contas.module';
+import { ContasModule } from './contas/contas.module';
+import { MovimentacoesModule } from './movimentacoes/movimentacoes.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { PlanoDeContasModule } from './plano-de-contas/plano-de-contas.module';
     CentroDeCustoModule,
     ContaBancariaModule,
     PlanoDeContasModule,
+    MovimentacoesModule,
+    ContasModule,
   ],
   controllers: [AppController],
   providers: [AppService],

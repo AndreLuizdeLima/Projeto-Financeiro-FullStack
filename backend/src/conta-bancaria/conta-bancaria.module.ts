@@ -1,3 +1,4 @@
+import { FinanceiroModule } from '@/financeiro/financeiro.module';
 import { Module } from '@nestjs/common';
 import { ContaBancariaService } from './conta-bancaria.service';
 import { ContaBancariaController } from './conta-bancaria.controller';
@@ -9,6 +10,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 @Module({
   controllers: [ContaBancariaController],
   providers: [ContaBancariaService],
-  imports: [TypeOrmModule.forFeature([ContaBancaria, User]), AuthModule],
+  imports: [
+    FinanceiroModule,
+    TypeOrmModule.forFeature([ContaBancaria, User]),
+    AuthModule,
+  ],
 })
 export class ContaBancariaModule {}

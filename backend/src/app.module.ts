@@ -13,6 +13,7 @@ import { ContaBancariaModule } from './conta-bancaria/conta-bancaria.module';
 import { PlanoDeContasModule } from './plano-de-contas/plano-de-contas.module';
 import { ContasModule } from './contas/contas.module';
 import { MovimentacoesModule } from './movimentacoes/movimentacoes.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { MovimentacoesModule } from './movimentacoes/movimentacoes.module';
     PlanoDeContasModule,
     MovimentacoesModule,
     ContasModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

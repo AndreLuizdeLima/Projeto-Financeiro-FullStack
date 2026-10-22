@@ -1,0 +1,1763 @@
+{
+  "info": {
+    "_postman_id": "a37b678e-5c5b-4ed6-8dd7-c009fd02dc5d",
+    "name": "Sistema Financeiro",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "40229088"
+  },
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create new user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"Andre Luiz de Lima\",\n    \"email\": \"andreluiz@andre.com.br\",\n    \"password\": \"andre123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update user",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"Andre Luiz de Lima\",\n    \"email\": \"andreluiz@andre.com.br\",\n    \"password\": \"andre\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get user",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/?page=1&limit=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get user byId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete user byId",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cliente",
+      "item": [
+        {
+          "name": "Create new cliente",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"cnpj\": \"999.999.999/9999.9\",\n    \"razaoSocial\": \"Empresa xpto\",\n    \"nomeFantasia\": \"Xpto ltda\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/cliente/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cliente",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update cliente",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"cnpj\": \"999.999.999/9999.9\",\n    \"razaoSocial\": \"Empresa xpto\",\n    \"nomeFantasia\": \"Xpto ltda\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/cliente/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cliente",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get cliente",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/cliente/?page=1&limit=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cliente",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get cliente byId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/cliente/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cliente",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete cliente byId",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/cliente/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cliente",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "4"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Formas de recebimento",
+      "item": [
+        {
+          "name": "Create new forma",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"Transferência bancária\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/formas-recebimento/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "formas-recebimento",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update forma",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/formas-recebimento/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "formas-recebimento",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get forma",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/formas-recebimento/?page=1&limit=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "formas-recebimento",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get forma byId",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/formas-recebimento/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "formas-recebimento",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete forma byId",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/formas-recebimento/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "formas-recebimento",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Centro de custo",
+      "item": [
+        {
+          "name": "Create new forma",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"Vendas\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/centro-de-custo/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "centro-de-custo",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update forma",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/centro-de-custo/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "centro-de-custo",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get forma",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/centro-de-custo/?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "centro-de-custo",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get forma byId",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/centro-de-custo/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "centro-de-custo",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete forma byId",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/centro-de-custo/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "centro-de-custo",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Contas bancarias",
+      "item": [
+        {
+          "name": "Create new conta",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"Conta caixa\",\n    \"conta\": \"999-99\",\n    \"tipo\": \"ContaCorrente\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/conta-bancaria/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conta-bancaria",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update conta",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"Conta caixa\",\n    \"conta\": \"999-99\",\n    \"tipo\": \"ContaCorrente\",\n    \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/conta-bancaria/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conta-bancaria",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get conta",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conta-bancaria/?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conta-bancaria",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get conta byId",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conta-bancaria/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conta-bancaria",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete conta byId",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conta-bancaria/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conta-bancaria",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Login",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();\n\npm.collectionVariables.set(\"accessToken\", response.accessToken);\npm.collectionVariables.set(\"refreshToken\", response.refreshToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"andreluiz@andre.com.br\",\n    \"password\": \"andre\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login refresh",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();\n\npm.collectionVariables.set(\"accessToken\", response.accessToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiYW5kcmVsdWl6QGFuZHJlLmNvbS5iciIsInRva2VuVHlwZSI6InJlZnJlc2giLCJpYXQiOjE3ODk5MzIyMzgsImV4cCI6MTc4OTk0NjYzOCwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjMwMCJ9.BrS2wE6wO37NICWsthXs22HH8GnJ5wtR7WQ_5kodUdY\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Contas",
+      "item": [
+        {
+          "name": "Criar Contas",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"PAGAR\",\n  \"descricao\": \"Compra de materiais\",\n  \"valorOriginal\": \"1000.00\",\n  \"dataEmissao\": \"2026-10-01\",\n  \"dataVencimento\": \"2026-10-15\",\n  \"clienteId\": 1,\n  \"planoDeContaId\": 1,\n  \"centroDeCustoId\": 1,\n  \"taxaJurosDiaria\": \"0.1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/contas/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "contas",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Liquidação",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dataPagamento\": \"2026-10-19\",\n  \"contaBancariaId\": 1,\n  \"formaRecebimentoId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/contas/:id/liquidar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "contas",
+                ":id",
+                "liquidar"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Editar conta",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descricao\": \"Compra de materiais atualizada\",\n  \"valorOriginal\": \"1200.00\",\n  \"dataVencimento\": \"2026-10-20\",\n  \"taxaJurosDiaria\": \"0.033333\",\n  \"taxaMulta\": \"2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/contas/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "contas",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Lista contas",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/contas?page=1&limit=20&tipoConta=PAGAR&clienteId=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "contas"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "pagina"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "20 - padrão; máximo 100"
+                },
+                {
+                  "key": "tipoConta",
+                  "value": "PAGAR",
+                  "description": "PAGAR ou RECEBER"
+                },
+                {
+                  "key": "situacao",
+                  "value": "ABERTA",
+                  "description": "ABERTA, LIQUIDADA, CANCELADA",
+                  "disabled": true
+                },
+                {
+                  "key": "vencida",
+                  "value": "true",
+                  "description": "true ou false",
+                  "disabled": true
+                },
+                {
+                  "key": "clienteId",
+                  "value": "1"
+                },
+                {
+                  "key": "planoDeContaId",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "centroDeCustoId",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "dataInicial",
+                  "value": "2026-10-01",
+                  "description": "YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "2026-10-31",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resumo das contas",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/contas/resumo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "contas",
+                "resumo"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Detalhe das contas",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/contas/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "contas",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancelar conta",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/contas/:id/cancelar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "contas",
+                ":id",
+                "cancelar"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Estornar conta",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/contas/:id/estornar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "contas",
+                ":id",
+                "estornar"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Excluir conta",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/contas/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "contas",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Movimentações",
+      "item": [
+        {
+          "name": "Criar entrada avulsa",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"ENTRADA\",\n  \"origem\": \"AVULSA\",\n  \"descricao\": \"Entrada de valor no caixa\",\n  \"valor\": \"500.00\",\n  \"data\": \"2026-10-19\",\n  \"contaDestinoId\": 1,\n  \"clienteId\": 1,\n  \"planoDeContaId\": 1,\n  \"centroDeCustoId\": 1,\n  \"formaRecebimentoId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/movimentacoes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimentacoes",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Registrar saldo inicial",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"ENTRADA\",\n  \"origem\": \"SALDO_INICIAL\",\n  \"descricao\": \"Saldo inicial do caixa\",\n  \"valor\": \"5000.00\",\n  \"data\": \"2026-10-01\",\n  \"contaDestinoId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/movimentacoes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimentacoes",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Saida entrada avulsa",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"SAIDA\",\n  \"descricao\": \"Retirada do caixa\",\n  \"valor\": \"150.00\",\n  \"data\": \"2026-10-19\",\n  \"contaOrigemId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/movimentacoes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimentacoes",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Trasnferencia entrada avulsa",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"TRANSFERENCIA\",\n  \"descricao\": \"Transferência do caixa para o banco\",\n  \"valor\": \"1000.00\",\n  \"data\": \"2026-10-19\",\n  \"contaOrigemId\": 1,\n  \"contaDestinoId\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/movimentacoes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimentacoes",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Estornar movimentação avulsa ou transferência",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/movimentacoes/:id/estornar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimentacoes",
+                ":id",
+                "estornar"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar movimentações",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/movimentacoes/?page=1&limit=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimentacoes",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "max 100"
+                },
+                {
+                  "key": "tipo",
+                  "value": "ENTRADA",
+                  "description": "ENTRADA, SAIDA, TRANSFERENCIA",
+                  "disabled": true
+                },
+                {
+                  "key": "origem",
+                  "value": "AVULSA",
+                  "description": "AVULSA, SALDO_INICIAL, LIQUIDACAO, ESTORNO",
+                  "disabled": true
+                },
+                {
+                  "key": "contaBancariaId",
+                  "value": "1",
+                  "description": "1 - considera origem ou destino",
+                  "disabled": true
+                },
+                {
+                  "key": "clienteId",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "planoDeContaId",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "centroDeCustoId",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "dataInicial",
+                  "value": "2026-10-01",
+                  "description": "YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "2026-10-31",
+                  "description": "O período considera a data efetiva da movimentação.",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Detalhar movimentação",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/movimentacoes/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimentacoes",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consultar saldos",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/movimentacoes/saldos?contaBancariaId=1&dataFinal=2026-10-19",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimentacoes",
+                "saldos"
+              ],
+              "query": [
+                {
+                  "key": "contaBancariaId",
+                  "value": "1"
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "2026-10-19",
+                  "description": "YYYY-MM-DD"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resumo das movimentações",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/movimentacoes/resumo?contaBancariaId=1&dataInicial=2026-10-01&dataFinal=2026-10-31",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimentacoes",
+                "resumo"
+              ],
+              "query": [
+                {
+                  "key": "contaBancariaId",
+                  "value": "1"
+                },
+                {
+                  "key": "dataInicial",
+                  "value": "2026-10-01"
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "2026-10-31"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "base_url",
+      "value": ""
+    }
+  ]
+}

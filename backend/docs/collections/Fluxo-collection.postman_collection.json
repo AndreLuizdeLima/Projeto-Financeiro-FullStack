@@ -348,7 +348,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"nome\": \"Transferência bancária\"\n}",
+              "raw": "{\n    \"nome\": \"Dinheiro\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1002,7 +1002,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"tipo\": \"PAGAR\",\n  \"descricao\": \"Compra de materiais\",\n  \"valorOriginal\": \"1000.00\",\n  \"dataEmissao\": \"2026-10-01\",\n  \"dataVencimento\": \"2026-10-15\",\n  \"clienteId\": 1,\n  \"planoDeContaId\": 1,\n  \"centroDeCustoId\": 1,\n  \"taxaJurosDiaria\": \"0.1\"\n}",
+              "raw": "{\n  \"tipo\": \"PAGAR\",\n  \"descricao\": \"Compra de materiais\",\n  \"valorOriginal\": \"1000.00\",\n  \"dataEmissao\": \"2026-10-01\",\n  \"dataVencimento\": \"2026-10-15\",\n  \"clienteId\": 4,\n  \"planoDeContaId\": 5,\n  \"centroDeCustoId\": 1,\n  \"taxaJurosDiaria\": \"0.1\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1039,7 +1039,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"dataPagamento\": \"2026-10-19\",\n  \"contaBancariaId\": 1,\n  \"formaRecebimentoId\": 1\n}",
+              "raw": "{\n  \"dataPagamento\": \"2026-10-21\",\n  \"contaBancariaId\": 4,\n  \"formaRecebimentoId\": 3\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1125,7 +1125,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/contas?page=1&limit=20&tipoConta=PAGAR&clienteId=1",
+              "raw": "{{base_url}}/contas?page=1&limit=20",
               "host": [
                 "{{base_url}}"
               ],
@@ -1146,7 +1146,8 @@
                 {
                   "key": "tipoConta",
                   "value": "PAGAR",
-                  "description": "PAGAR ou RECEBER"
+                  "description": "PAGAR ou RECEBER",
+                  "disabled": true
                 },
                 {
                   "key": "situacao",
@@ -1162,7 +1163,8 @@
                 },
                 {
                   "key": "clienteId",
-                  "value": "1"
+                  "value": "1",
+                  "disabled": true
                 },
                 {
                   "key": "planoDeContaId",
@@ -1415,7 +1417,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"tipo\": \"ENTRADA\",\n  \"origem\": \"SALDO_INICIAL\",\n  \"descricao\": \"Saldo inicial do caixa\",\n  \"valor\": \"5000.00\",\n  \"data\": \"2026-10-01\",\n  \"contaDestinoId\": 1\n}",
+              "raw": "{\n  \"tipo\": \"ENTRADA\",\n  \"origem\": \"SALDO_INICIAL\",\n  \"descricao\": \"Saldo inicial do caixa\",\n  \"valor\": \"5000.00\",\n  \"data\": \"2026-10-01\",\n  \"contaDestinoId\": 4\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1678,7 +1680,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/movimentacoes/saldos?contaBancariaId=1&dataFinal=2026-10-19",
+              "raw": "{{base_url}}/movimentacoes/saldos",
               "host": [
                 "{{base_url}}"
               ],
@@ -1689,12 +1691,14 @@
               "query": [
                 {
                   "key": "contaBancariaId",
-                  "value": "1"
+                  "value": "1",
+                  "disabled": true
                 },
                 {
                   "key": "dataFinal",
                   "value": "2026-10-19",
-                  "description": "YYYY-MM-DD"
+                  "description": "YYYY-MM-DD",
+                  "disabled": true
                 }
               ]
             }
@@ -1737,6 +1741,268 @@
                 {
                   "key": "dataFinal",
                   "value": "2026-10-31"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Planos de contas",
+      "item": [
+        {
+          "name": "Criar plano de contas",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"dinheiro em caixa\",\n  \"tipo\": \"ATIVO\",\n  \"natureza\": \"ANALITICA\",\n  \"contaPaiId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/plano-de-contas/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "plano-de-contas",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar planos de contas",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/plano-de-contas?page=1&limit=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "plano-de-contas"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Detalhar plano de contas",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/plano-de-contas/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "plano-de-contas",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Editar plano de contas",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Dinheiro em caixa\"\n  //\"tipo\": \"RECEITA\",\n  //\"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/plano-de-contas/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "plano-de-contas",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Inativar plano de contas",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{base_url}}/plano-de-contas/:id",
+              "host": [
+                "{base_url}}"
+              ],
+              "path": [
+                "plano-de-contas",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboards",
+      "item": [
+        {
+          "name": "Grafico semanal",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/dashboard/evolucao-saldo?mes=2026-10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "dashboard",
+                "evolucao-saldo"
+              ],
+              "query": [
+                {
+                  "key": "mes",
+                  "value": "2026-10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cards",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/dashboard?mes=2026-10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "dashboard"
+              ],
+              "query": [
+                {
+                  "key": "mes",
+                  "value": "2026-10"
                 }
               ]
             }

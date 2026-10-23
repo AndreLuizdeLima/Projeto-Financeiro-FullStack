@@ -36,9 +36,10 @@ export const useCardLogin = () => {
         toast.add({
           type: "error",
           title: "Erro ao fazer login",
-          description: cause instanceof ApiError
-            ? cause.message
-            : "Não foi possível entrar. Tente novamente.",
+          description:
+            cause instanceof ApiError
+              ? cause.message
+              : "Não foi possível entrar. Tente novamente.",
         });
     } finally {
       pending.current = false;

@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router";
 import { SessionGate } from "./SessionGate";
 import LoginPage from "@/app/login/LoginPage";
-import PageHome from "@/app/home/PageHome";
+import PageHome from "@/app/Page/PageHome";
 
 export const router = createBrowserRouter([
   {

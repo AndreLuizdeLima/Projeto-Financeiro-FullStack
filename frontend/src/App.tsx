@@ -1,10 +1,12 @@
-import "./App.css";
+import { RouterProvider } from "react-router/dom";
+import { AuthProvider } from "@/auth/AuthProvider";
+import { router } from "@/router/app-router";
 
 function App() {
   return (
-    <div>
-      <h1>Front Fluxo</h1>
-    </div>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   );
 }
 

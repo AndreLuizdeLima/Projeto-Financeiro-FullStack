@@ -26,7 +26,8 @@ export const useCardsViewModel = (mes: string) => {
         if (!controller.signal.aborted) {
           setResultado({
             mes,
-            error: "Não foi possível carregar os dados do mês. Tente novamente mais tarde.",
+            error:
+              "Não foi possível carregar os dados do mês. Tente novamente mais tarde.",
           });
         }
       });

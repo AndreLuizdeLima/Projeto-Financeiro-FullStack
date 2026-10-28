@@ -83,28 +83,6 @@ const GraficoSaldo = ({ dados }: { dados: EvolucaoSaldoMensal }) => {
         role="img"
         aria-label="Gráfico de evolução do saldo acumulado por período"
       />
-      <table className="sr-only">
-        <thead>
-          <tr>
-            <th scope="col">Período</th>
-            <th scope="col">Saldo</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">Saldo inicial</th>
-            <td>{formatarMoeda(dados.saldoInicial)}</td>
-          </tr>
-          {dados.evolucao.map((item) => (
-            <tr key={item.semana}>
-              <th scope="row">
-                {dataCurta(item.dataInicial)} a {dataCurta(item.dataFinal)}
-              </th>
-              <td>{formatarMoeda(item.saldo)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </>
   );
 };

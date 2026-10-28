@@ -3,8 +3,16 @@ import { Card } from "@/components/ui/card";
 
 import { useCardsViewModel } from "../view-model/useCardsViewModel";
 
-const CardsView = () => {
-  const { cardsBuild } = useCardsViewModel();
+const CardsView = ({ mes }: { mes: string }) => {
+  const { cardsBuild, error } = useCardsViewModel(mes);
+
+  if (error) {
+    return (
+      <p role="alert" className="text-sm text-destructive">
+        {error}
+      </p>
+    );
+  }
 
   return (
     <div>

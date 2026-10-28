@@ -1,4 +1,5 @@
 import CardsView from "./view/CardsView";
+import EvolucaoSaldoView from "./view/EvolucaoSaldoView";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
 import { useEffect } from "react";
@@ -40,6 +41,7 @@ const PageDashboard = () => {
         </p>
       </header>
       <CardsView mes={mes} />
+      <EvolucaoSaldoView mes={mes} />
     </article>
   );
 };

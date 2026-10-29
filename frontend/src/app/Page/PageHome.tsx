@@ -10,7 +10,7 @@ const PageHome = () => {
         </div>
         <AvatarIcon />
       </header>
-      <main className="p-6">
+      <main>
         <Outlet />
       </main>
     </div>

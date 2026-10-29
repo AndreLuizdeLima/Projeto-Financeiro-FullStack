@@ -1,0 +1,4 @@
+interface:
+  display_name: "Testes com Playwright"
+  short_description: "Gera testes isolados em testes-automatizados"
+  default_prompt: "Use $playwright-tests para criar e executar testes deste projeto, alterando somente testes-automatizados/ e lendo o restante sem modificar."

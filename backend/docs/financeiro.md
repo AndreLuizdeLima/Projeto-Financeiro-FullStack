@@ -100,3 +100,51 @@ Liquidações e estornos usam transações, bloqueio da conta e índices únicos
 ## Organização dos serviços
 
 `ContasService` gerencia contas a pagar/receber; `LiquidacoesService` executa liquidações e seus estornos; `MovimentacoesService` gerencia movimentações e inversões; `SaldosService` calcula saldos. As validações compartilhadas recebem o `EntityManager` da operação. Liquidação e estorno continuam usando uma única transação para todas as alterações.
+
+## Testes unitários do financeiro
+
+Os testes ficam em `src/financeiro/*.spec.ts`. Usam o Jest já instalado, com acesso ao banco simulado e data/fuso fixos. Não exigem PostgreSQL, servidor em execução, token ou arquivo `.env`.
+
+Execute a partir da raiz do projeto:
+
+```bash
+cd backend
+npm run test:financeiro
+```
+
+Para gerar o relatório de cobertura dos serviços financeiros e dos cálculos:
+
+```bash
+npm run test:financeiro:cov
+```
+
+O resumo aparece no terminal. O relatório navegável fica em `backend/coverage/lcov-report/index.html` (caminho a partir da raiz do projeto).
+
+Para acompanhar alterações automaticamente, executar somente um arquivo ou filtrar um cenário:
+
+```bash
+npm run test:financeiro -- --watch
+npm run test:financeiro -- --runTestsByPath src/financeiro/liquidacoes.service.spec.ts
+npm run test:financeiro -- -t 'preservando histórico'
+```
+
+Para executar todos os testes unitários do backend, incluindo os de outros módulos:
+
+```bash
+npm test -- --runInBand
+```
+
+### Escopo e manutenção
+
+- `financeiro.utils.spec.ts`: juros diários, multa única, arredondamento e limites monetários.
+- `financeiro-validacoes.service.spec.ts`: referências ativas, plano analítico, estados da conta, vencimento e período.
+- `contas.service.spec.ts`: criação de contas a pagar/receber e restrições de exclusão.
+- `liquidacoes.service.spec.ts`: liquidação e estorno, vínculos, histórico, valor e direção da movimentação.
+- `movimentacoes.service.spec.ts`: entradas, saídas, transferências, saldo inicial e restrições de estorno.
+- `saldos.service.spec.ts`: cálculo dos saldos a partir dos totais fornecidos pelo banco, transferências, estornos e saldo negativo.
+
+O helper em `src/financeiro/testing/financeiro-test.helper.ts` fornece entidades de exemplo e mocks pequenos do `DataSource`/`EntityManager`. O callback de transação é executado, mas o helper não implementa banco, rollback ou bloqueios. Os cálculos e as regras financeiras são executados de verdade. Esse diretório é excluído do build de produção.
+
+Prefira adicionar um cenário quando houver uma regra financeira nova ou uma regressão concreta. Use `it.each` para variações da mesma regra e confira resultados e registros produzidos. A cobertura inclui métodos de consulta, edição e cancelamento ainda fora desta etapa; não há meta global de porcentagem.
+
+Estes testes não comprovam execução do SQL, constraints, valores padrão das entidades, rollback real ou concorrência. Essas garantias exigem uma suíte de integração separada com PostgreSQL.

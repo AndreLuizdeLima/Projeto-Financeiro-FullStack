@@ -1,19 +1,19 @@
 import { Outlet } from "react-router";
-import AvatarIcon from "@/components/AvatarIcon";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import HeaderView from "./view/HeaderView";
+import SidebarView from "./view/SidebarView";
 
 const PageHome = () => {
   return (
-    <div className="min-h-svh bg-background">
-      <header className="flex items-center justify-between border-b bg-primary px-6 py-4">
-        <div>
-          <img src="data/fluxo-logo-texto-branca.png" className="h-20" />
-        </div>
-        <AvatarIcon />
-      </header>
-      <main>
-        <Outlet />
-      </main>
-    </div>
+    <SidebarProvider className="flex-col bg-background [--header-height:7rem]">
+      <HeaderView />
+      <div className="flex min-w-0 flex-1">
+        <SidebarView />
+        <main className="min-w-0 flex-1">
+          <Outlet />
+        </main>
+      </div>
+    </SidebarProvider>
   );
 };
 

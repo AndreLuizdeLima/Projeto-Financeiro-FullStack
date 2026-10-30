@@ -19,7 +19,10 @@ export async function readJson<T>(response: Response): Promise<T> {
     const message =
       typeof body?.message === "string"
         ? body.message
-        : "Não foi possível concluir a solicitação.";
+        : Array.isArray(body?.message) &&
+            body.message.every((item: unknown) => typeof item === "string")
+          ? body.message.join(" ")
+          : "Não foi possível concluir a solicitação.";
     throw new ApiError(response.status, message);
   }
   if (!body) throw new Error("Resposta inválida do servidor.");

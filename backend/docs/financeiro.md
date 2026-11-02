@@ -24,6 +24,8 @@ Durante o desenvolvimento, as tabelas são criadas e atualizadas pelo TypeORM co
 | POST | `/contas/:id/liquidar` | Liquidar integralmente e movimentar caixa |
 | POST | `/contas/:id/estornar` | Estornar liquidação e reabrir conta |
 
+A listagem `GET /contas` inclui, em cada item de `data`, `planoDeConta: { id, codigo, nome }` e `centroDeCusto: { id, nome } | null`, além dos campos existentes. Contas sem centro de custo permanecem na listagem. Os nomes também são retornados quando o cadastro vinculado está inativo, preservando a identificação histórica. Paginação, ordenação e filtros permanecem iguais.
+
 Criar conta:
 
 ```json

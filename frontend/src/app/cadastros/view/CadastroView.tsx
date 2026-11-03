@@ -2,6 +2,7 @@ import { useId, type ReactNode } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import { Eye, Pencil, Plus, RotateCcw, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
 import type { Registro, FormularioProps } from "../model/cadastro";
 import type { useCadastro } from "../view-model/useCadastro";

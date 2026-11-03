@@ -63,7 +63,7 @@ export const SeletorPesquisavel = ({
           </div>
         </div>
         <Combobox.Portal>
-          <Combobox.Positioner sideOffset={4} align="start" className="z-[60]">
+          <Combobox.Positioner sideOffset={4} align="start" className="z-60">
             <Combobox.Popup className="max-h-[min(20rem,var(--available-height))] w-(--anchor-width) max-w-[calc(100vw-2rem)] overflow-y-auto rounded-lg border bg-popover p-1 text-popover-foreground shadow-md">
               <Combobox.Empty className="text-sm text-muted-foreground">
                 <span className="block px-3 py-4">

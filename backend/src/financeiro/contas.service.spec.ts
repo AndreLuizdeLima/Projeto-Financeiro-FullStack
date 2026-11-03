@@ -37,7 +37,7 @@ const setup = () => {
   const service = new ContasService(banco.db, validacoes);
   return { ...banco, referencias, service };
 };
-describe('ContasService — criação e exclusão', () => {
+describe('ContasService — criação, exclusão e cancelamento', () => {
   beforeEach(fixarHoje);
   afterEach(() => {
     jest.useRealTimers();
@@ -132,5 +132,46 @@ describe('ContasService — criação e exclusão', () => {
     manager.findOne.mockResolvedValue(null);
     await expect(service.excluirConta(99)).rejects.toThrow(NotFoundException);
     expect(manager.remove).not.toHaveBeenCalled();
+  });
+  it.each([
+    { tipo: TipoConta.PAGAR, dataVencimento: '2026-10-10' },
+    { tipo: TipoConta.RECEBER, dataVencimento: '2026-10-30' },
+  ])(
+    'cancela conta aberta $tipo com vencimento $dataVencimento preservando o registro',
+    async (dados) => {
+      const { service, manager } = setup();
+      const conta = criarConta(dados);
+      manager.findOne.mockResolvedValue(conta);
+      const resultado = await service.cancelarConta(conta.id);
+      expect(resultado).toMatchObject({
+        id: conta.id,
+        tipo: dados.tipo,
+        dataVencimento: dados.dataVencimento,
+        situacao: SituacaoConta.CANCELADA,
+        valorOriginal: conta.valorOriginal,
+      });
+      expect(manager.save).toHaveBeenCalledWith(conta);
+      expect(manager.remove).not.toHaveBeenCalled();
+    },
+  );
+  it.each([SituacaoConta.LIQUIDADA, SituacaoConta.CANCELADA])(
+    'não cancela conta %s',
+    async (situacao) => {
+      const { service, manager } = setup();
+      const conta = criarConta({ situacao });
+      manager.findOne.mockResolvedValue(conta);
+      await expect(service.cancelarConta(conta.id)).rejects.toThrow(
+        ConflictException,
+      );
+      expect(conta.situacao).toBe(situacao);
+      expect(manager.save).not.toHaveBeenCalled();
+      expect(manager.remove).not.toHaveBeenCalled();
+    },
+  );
+  it('não cancela conta inexistente', async () => {
+    const { service, manager } = setup();
+    manager.findOne.mockResolvedValue(null);
+    await expect(service.cancelarConta(99)).rejects.toThrow(NotFoundException);
+    expect(manager.save).not.toHaveBeenCalled();
   });
 });

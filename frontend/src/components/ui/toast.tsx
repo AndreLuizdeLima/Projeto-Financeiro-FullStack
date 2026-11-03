@@ -41,6 +41,11 @@ function Toast({ className, ...props }: ToastPrimitive.Root.Props) {
       data-slot="toast"
       className={cn(
         "group/toast pointer-events-auto absolute top-0 right-0 z-[calc(1000-var(--toast-index))] w-full origin-top rounded-2xl border bg-popover text-popover-foreground shadow-lg will-change-transform outline-none select-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+        "data-[type=success]:border-green-600 data-[type=success]:bg-green-100 data-[type=success]:text-green-600",
+        "data-[type=error]:border-red-600 data-[type=error]:bg-red-100 data-[type=error]:text-red-600",
+        "data-[type=warning]:border-amber-600 data-[type=warning]:bg-amber-100 data-[type=warning]:text-amber-600",
+        "data-[type=loading]:border-primary data-[type=loading]:bg-background data-[type=loading]:text-primary",
+        "data-[type=info]:border-border data-[type=info]:bg-popover data-[type=info]:text-popover-foreground",
         "[--gap:0.75rem] [--height:var(--toast-frontmost-height,var(--toast-height))] [--offset-y:calc(var(--toast-offset-y)+calc(var(--toast-index)*var(--gap))+var(--toast-swipe-movement-y))] [--peek:0.75rem] [--scale:calc(max(0,1-(var(--toast-index)*0.1)))]",
         "h-(--height) transform-[translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)+(var(--toast-index)*var(--peek))))_scale(var(--scale))] [transition:transform_500ms_cubic-bezier(0.22,1,0.36,1),opacity_500ms,height_150ms]",
         "after:absolute after:top-full after:left-0 after:h-[calc(var(--gap)+1px)] after:w-full after:content-['']",
@@ -79,7 +84,7 @@ function ToastTitle({ className, ...props }: ToastPrimitive.Title.Props) {
   return (
     <ToastPrimitive.Title
       data-slot="toast-title"
-      className={cn("text-sm font-medium", className)}
+      className={cn("text-sm font-medium text-inherit", className)}
       {...props}
     />
   );
@@ -92,7 +97,7 @@ function ToastDescription({
   return (
     <ToastPrimitive.Description
       data-slot="toast-description"
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-sm opacity-85", className)}
       {...props}
     />
   );
@@ -107,7 +112,10 @@ function ToastAction({
     <ToastPrimitive.Action
       data-slot="toast-action"
       render={render}
-      className={cn("shrink-0", className)}
+      className={cn(
+        "shrink-0 border-current/30 bg-transparent text-inherit hover:bg-black/10 hover:text-inherit dark:bg-transparent dark:hover:bg-white/10",
+        className,
+      )}
       {...props}
     />
   );
@@ -122,10 +130,10 @@ function ToastClose({
   return (
     <ToastPrimitive.Close
       data-slot="toast-close"
-      aria-label="Close toast"
+      aria-label="Fechar notificação"
       render={render}
       className={cn(
-        "relative shrink-0 text-muted-foreground after:absolute after:-inset-2 after:content-[''] hover:text-foreground",
+        "relative shrink-0 text-inherit after:absolute after:-inset-2 after:content-[''] hover:bg-black/10 hover:text-inherit dark:hover:bg-white/10",
         className,
       )}
       {...props}
@@ -151,7 +159,7 @@ function ToastIcon({ type }: { type: string | undefined }) {
   }
 
   if (type === "error") {
-    icon = <OctagonXIcon className="text-destructive" aria-hidden="true" />;
+    icon = <OctagonXIcon aria-hidden="true" />;
   }
 
   if (type === "loading") {

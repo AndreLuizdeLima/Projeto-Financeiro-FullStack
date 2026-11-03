@@ -1,3 +1,4 @@
+import { ContaCancelarDialog } from "../components/ContaCancelarDialog";
 import type { ContasViewModel } from "../view-model/useContasViewModel";
 import { ContasFiltros } from "./ContasFiltros";
 import { ContaFormularioModal } from "./ContaFormularioModal";
@@ -8,6 +9,14 @@ export const ContasView = ({ vm }: { vm: ContasViewModel }) => (
     <h1 className="text-2xl font-semibold">{vm.titulo}</h1>
     <ContasFiltros vm={vm} />
     <ContasTabela vm={vm} />
+    {vm.confirmacao && (
+      <ContaCancelarDialog
+        confirmacao={vm.confirmacao}
+        cancelando={vm.cancelando}
+        fechar={vm.fecharCancelamento}
+        confirmar={vm.confirmarCancelamento}
+      />
+    )}
     {vm.modal && (
       <ContaFormularioModal
         key={`${vm.tipo}-${vm.modal.id ?? "criar"}`}

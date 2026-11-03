@@ -1,4 +1,4 @@
-import { Pencil } from "lucide-react";
+import { Pencil, Trash } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +16,8 @@ type Props = {
   titulo: string;
   linhas: ContasViewModel["linhas"];
   onEditar: (id: number, focoRetorno: HTMLElement) => void;
+  onCancelar: ContasViewModel["solicitarCancelamento"];
+  ocupado: boolean;
 };
 
 const colunas = [
@@ -29,7 +31,13 @@ const colunas = [
   "Ações",
 ];
 
-export const ContasTabelaDados = ({ titulo, linhas, onEditar }: Props) => (
+export const ContasTabelaDados = ({
+  titulo,
+  linhas,
+  onEditar,
+  onCancelar,
+  ocupado,
+}: Props) => (
   <Table>
     <TableCaption className="sr-only">
       {titulo}, ordenadas por código decrescente.
@@ -74,16 +82,34 @@ export const ContasTabelaDados = ({ titulo, linhas, onEditar }: Props) => (
             </TableCell>
             <TableCell>
               {conta.situacao === "ABERTA" && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon-sm"
-                  aria-label={`Editar conta #${conta.id}`}
-                  title="Editar conta"
-                  onClick={(event) => onEditar(conta.id, event.currentTarget)}
+                <div
+                  className="flex gap-1"
+                  role="group"
+                  aria-label={`Ações da conta #${conta.id}`}
                 >
-                  <Pencil />
-                </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    disabled={ocupado}
+                    aria-label={`Editar conta #${conta.id}`}
+                    title="Editar conta"
+                    onClick={(event) => onEditar(conta.id, event.currentTarget)}
+                  >
+                    <Pencil />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon-sm"
+                    disabled={ocupado}
+                    aria-label={`Cancelar conta #${conta.id}`}
+                    title="Cancelar conta"
+                    onClick={(event) => onCancelar(conta, event.currentTarget)}
+                  >
+                    <Trash />
+                  </Button>
+                </div>
               )}
             </TableCell>
           </TableRow>

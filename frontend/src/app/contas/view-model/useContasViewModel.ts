@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useContaCancelamentoViewModel } from "./useContaCancelamentoViewModel";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import dayjs from "dayjs";
 import debounce from "lodash/debounce";
 import type { DateRange } from "react-day-picker";
@@ -88,8 +89,22 @@ export const useContasViewModel = (tipo: TipoConta) => {
       controller.signal,
     )
       .then((lista) => {
-        if (!controller.signal.aborted)
-          setResultado({ chave: consulta, tipo, lista });
+        if (controller.signal.aborted) return;
+        if (!lista.data.length && consulta.page > 1) {
+          setConsulta((atual) =>
+            atual === consulta
+              ? {
+                  ...atual,
+                  page: Math.min(
+                    consulta.page - 1,
+                    Math.max(1, Math.ceil(lista.meta.total / 20)),
+                  ),
+                }
+              : atual,
+          );
+          return;
+        }
+        setResultado({ chave: consulta, tipo, lista });
       })
       .catch((erro: unknown) => {
         if (!controller.signal.aborted)
@@ -129,6 +144,11 @@ export const useContasViewModel = (tipo: TipoConta) => {
     return () => atualizarConsulta.cancel();
   }, [filtros, atualizarConsulta]);
 
+  const recarregar = useCallback(() => {
+    setConsulta((atual) => ({ ...atual, revisao: atual.revisao + 1 }));
+  }, []);
+  const cancelamento = useContaCancelamentoViewModel(recarregar);
+
   const erroPeriodo = validarPeriodo(filtros);
 
   const atual =
@@ -162,6 +182,7 @@ export const useContasViewModel = (tipo: TipoConta) => {
   return {
     tipo,
     modal,
+    ...cancelamento,
     adicionarConta: (focoRetorno: HTMLElement) => setModal({ focoRetorno }),
     editarConta: (id: number, focoRetorno: HTMLElement) =>
       setModal({ id, focoRetorno }),
@@ -224,8 +245,7 @@ export const useContasViewModel = (tipo: TipoConta) => {
     ) => setFiltros((atual) => ({ ...atual, [campo]: valor })),
     carregando: !atual,
     erro: atual?.erro,
-    recarregar: () =>
-      setConsulta((atual) => ({ ...atual, revisao: atual.revisao + 1 })),
+    recarregar,
     page: consulta.page,
     total: atual?.lista?.meta.total ?? 0,
     hasNextPage: atual?.lista?.meta.hasNextPage ?? false,

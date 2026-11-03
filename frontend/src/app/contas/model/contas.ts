@@ -70,3 +70,8 @@ export const formatarValor = (valor: string) =>
   formatarCentavos(centavos(valor));
 export const formatarData = (valor: string) =>
   valor.split("-").reverse().join("/");
+
+export const cancelarConta = async (request: Request, id: number) =>
+  readJson<Pick<Conta, "id" | "situacao">>(
+    await request(`/contas/${id}/cancelar`, { method: "POST" }),
+  );

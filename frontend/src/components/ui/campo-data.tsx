@@ -17,6 +17,8 @@ type Props = {
   onValueChange: (value: string) => void;
   disabled?: boolean;
   erro?: string;
+  min?: string;
+  max?: string;
 };
 
 export const CampoData = ({
@@ -25,6 +27,8 @@ export const CampoData = ({
   onValueChange,
   disabled,
   erro,
+  min,
+  max,
 }: Props) => {
   const id = useId();
   const [open, setOpen] = useState(false);
@@ -57,6 +61,10 @@ export const CampoData = ({
         >
           <Calendar
             mode="single"
+            disabled={(data) => {
+              const dia = dayjs(data).format("YYYY-MM-DD");
+              return !!((min && dia < min) || (max && dia > max));
+            }}
             locale={ptBR}
             selected={data}
             defaultMonth={data}

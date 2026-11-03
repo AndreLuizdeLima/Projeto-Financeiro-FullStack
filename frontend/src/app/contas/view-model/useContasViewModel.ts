@@ -9,6 +9,7 @@ import {
   formatarData,
   formatarValor,
   listarContas,
+  type Conta,
   type FiltrosContas,
   type PaginaContas,
   type TipoConta,
@@ -63,6 +64,19 @@ export const useContasViewModel = (tipo: TipoConta) => {
     id?: number;
     focoRetorno: HTMLElement;
   } | null>(null);
+
+  const [liquidacao, setLiquidacao] = useState<{
+    id: number;
+    focoRetorno: HTMLElement;
+  } | null>(null);
+  const abrirLiquidacao = useCallback(
+    (conta: Conta, focoRetorno: HTMLElement) => {
+      if (conta.situacao === "ABERTA")
+        setLiquidacao({ id: conta.id, focoRetorno });
+    },
+    [],
+  );
+  const fecharLiquidacao = useCallback(() => setLiquidacao(null), []);
 
   const [filtros, setFiltros] = useState<FiltrosContas>(criarFiltrosIniciais);
 
@@ -147,6 +161,10 @@ export const useContasViewModel = (tipo: TipoConta) => {
   const recarregar = useCallback(() => {
     setConsulta((atual) => ({ ...atual, revisao: atual.revisao + 1 }));
   }, []);
+  const contaLiquidada = useCallback(() => {
+    setLiquidacao(null);
+    recarregar();
+  }, [recarregar]);
   const cancelamento = useContaCancelamentoViewModel(recarregar);
 
   const erroPeriodo = validarPeriodo(filtros);
@@ -182,6 +200,10 @@ export const useContasViewModel = (tipo: TipoConta) => {
   return {
     tipo,
     modal,
+    liquidacao,
+    abrirLiquidacao,
+    fecharLiquidacao,
+    contaLiquidada,
     ...cancelamento,
     adicionarConta: (focoRetorno: HTMLElement) => setModal({ focoRetorno }),
     editarConta: (id: number, focoRetorno: HTMLElement) =>

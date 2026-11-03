@@ -35,6 +35,7 @@ export const ContasTabela = ({ vm }: { vm: ContasViewModel }) => (
           linhas={vm.linhas}
           onEditar={vm.editarConta}
           onCancelar={vm.solicitarCancelamento}
+          onLiquidar={vm.abrirLiquidacao}
           ocupado={vm.cancelando}
         />
         <footer className="flex flex-wrap items-center justify-between gap-3 border-t p-4">

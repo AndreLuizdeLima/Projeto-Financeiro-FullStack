@@ -1,4 +1,4 @@
-import { Pencil, Trash } from "lucide-react";
+import { CircleDollarSign, Pencil, Trash } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +17,7 @@ type Props = {
   linhas: ContasViewModel["linhas"];
   onEditar: (id: number, focoRetorno: HTMLElement) => void;
   onCancelar: ContasViewModel["solicitarCancelamento"];
+  onLiquidar: ContasViewModel["abrirLiquidacao"];
   ocupado: boolean;
 };
 
@@ -36,6 +37,7 @@ export const ContasTabelaDados = ({
   linhas,
   onEditar,
   onCancelar,
+  onLiquidar,
   ocupado,
 }: Props) => (
   <Table>
@@ -71,10 +73,12 @@ export const ContasTabelaDados = ({
               <Badge
                 variant={
                   conta.vencidaEmAberto
-                    ? "destructive"
+                    ? "error"
                     : conta.situacao === "ABERTA"
-                      ? "outline"
-                      : "secondary"
+                      ? "info"
+                      : conta.situacao === "LIQUIDADA"
+                        ? "success"
+                        : "neutral"
                 }
               >
                 {conta.situacaoTexto}
@@ -97,6 +101,19 @@ export const ContasTabelaDados = ({
                     onClick={(event) => onEditar(conta.id, event.currentTarget)}
                   >
                     <Pencil />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    disabled={ocupado}
+                    aria-label={`${conta.tipo === "PAGAR" ? "Pagar" : "Receber"} conta #${conta.id}`}
+                    title={
+                      conta.tipo === "PAGAR" ? "Pagar conta" : "Receber conta"
+                    }
+                    onClick={(event) => onLiquidar(conta, event.currentTarget)}
+                  >
+                    <CircleDollarSign />
                   </Button>
                   <Button
                     type="button"

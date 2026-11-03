@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
@@ -16,7 +17,9 @@ import {
 
 import { LiquidarContaDto } from './dto/liquidar-conta.dto';
 
-import { calcularLiquidacao, hoje } from './financeiro.utils';
+import { calcularLiquidacao, dinheiro, hoje } from './financeiro.utils';
+import { Conta } from './entities/conta.entity';
+import { PreviaLiquidacaoDto } from './dto/previa-liquidacao.dto';
 
 import { ContaBancaria } from '@/conta-bancaria/entities/conta-bancaria.entity';
 
@@ -31,14 +34,53 @@ export class LiquidacoesService {
     private readonly movimentacoes: MovimentacoesService,
   ) {}
 
+  private validarData(conta: Conta, pagamento: string, dataAtual: string) {
+    this.validacoes.aberta(conta);
+    if (pagamento > dataAtual)
+      throw new BadRequestException('Pagamento não pode estar no futuro.');
+    if (pagamento < conta.dataEmissao)
+      throw new BadRequestException('Pagamento anterior à emissão.');
+  }
+
+  async previa(id: number, dto: PreviaLiquidacaoDto) {
+    const conta = await this.db.getRepository(Conta).findOne({
+      where: { id },
+      relations: { cliente: true },
+    });
+    if (!conta) throw new NotFoundException('Conta não encontrada.');
+    const dataAtual = hoje();
+    const dataPagamento = dto.dataPagamento ?? dataAtual;
+    this.validarData(conta, dataPagamento, dataAtual);
+    return {
+      conta: {
+        id: conta.id,
+        tipo: conta.tipo,
+        descricao: conta.descricao,
+        clienteNome: conta.cliente?.razaoSocial ?? '—',
+        dataEmissao: conta.dataEmissao,
+        dataVencimento: conta.dataVencimento,
+      },
+      dataAtual,
+      dataPagamento,
+      valorOriginal: conta.valorOriginal,
+      taxaJurosDiaria: conta.taxaJurosDiaria,
+      taxaMulta: conta.taxaMulta,
+      ...calcularLiquidacao(
+        conta.valorOriginal,
+        conta.dataVencimento,
+        dataPagamento,
+        conta.taxaJurosDiaria,
+        conta.taxaMulta,
+      ),
+    };
+  }
+
   async liquidar(id: number, dto: LiquidarContaDto, userId: number) {
     if (dto.dataPagamento > hoje())
       throw new BadRequestException('Pagamento não pode estar no futuro.');
     return this.db.transaction(async (m) => {
       const c = await this.validacoes.conta(m, id);
-      this.validacoes.aberta(c);
-      if (dto.dataPagamento < c.dataEmissao)
-        throw new BadRequestException('Pagamento anterior à emissão.');
+      this.validarData(c, dto.dataPagamento, hoje());
       await this.validacoes.referencias(m, dto);
       await this.validacoes.referencia(
         m,
@@ -53,10 +95,19 @@ export class LiquidacoesService {
         c.taxaJurosDiaria,
         c.taxaMulta,
       );
+      if (
+        dto.valorTotalEsperado !== undefined &&
+        dinheiro(dto.valorTotalEsperado) !== valores.valorTotal
+      )
+        throw new ConflictException(
+          'O total da liquidação mudou. Revise os valores atualizados e confirme novamente.',
+        );
       const l = await m.save(
         Liquidacao,
         m.create(Liquidacao, {
-          ...dto,
+          dataPagamento: dto.dataPagamento,
+          contaBancariaId: dto.contaBancariaId,
+          formaRecebimentoId: dto.formaRecebimentoId,
           ...valores,
           contaId: id,
           valorOriginal: c.valorOriginal,

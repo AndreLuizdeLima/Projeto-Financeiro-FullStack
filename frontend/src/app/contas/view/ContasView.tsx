@@ -1,3 +1,4 @@
+import { ContaLiquidacaoModal } from "../components/ContaLiquidacaoModal";
 import { ContaCancelarDialog } from "../components/ContaCancelarDialog";
 import type { ContasViewModel } from "../view-model/useContasViewModel";
 import { ContasFiltros } from "./ContasFiltros";
@@ -9,6 +10,17 @@ export const ContasView = ({ vm }: { vm: ContasViewModel }) => (
     <h1 className="text-2xl font-semibold">{vm.titulo}</h1>
     <ContasFiltros vm={vm} />
     <ContasTabela vm={vm} />
+    {vm.liquidacao && (
+      <ContaLiquidacaoModal
+        key={`${vm.tipo}-${vm.liquidacao.id}`}
+        id={vm.liquidacao.id}
+        tipo={vm.tipo}
+        focoRetorno={vm.liquidacao.focoRetorno}
+        fechar={vm.fecharLiquidacao}
+        aoConcluir={vm.contaLiquidada}
+        aoAtualizar={vm.recarregar}
+      />
+    )}
     {vm.confirmacao && (
       <ContaCancelarDialog
         confirmacao={vm.confirmacao}

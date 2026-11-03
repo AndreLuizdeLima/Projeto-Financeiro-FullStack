@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import { Eye, Pencil, Plus, RotateCcw, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
 import type { Registro, FormularioProps } from "../model/cadastro";
 import type { useCadastro } from "../view-model/useCadastro";
@@ -114,11 +115,9 @@ export const CadastroView = <T extends Registro, C, U>({
                         </td>
                       ))}
                       <td className="px-4 py-3">
-                        <span
-                          className={`rounded-md px-2 py-1 text-xs font-medium ${item.isActive ? "bg-emerald-50 text-emerald-800" : "bg-muted text-muted-foreground"}`}
-                        >
+                        <Badge variant={item.isActive ? "success" : "error"}>
                           {item.isActive ? "Ativo" : "Inativo"}
-                        </span>
+                        </Badge>
                       </td>
                       <td className="px-4 py-3">
                         <div

@@ -21,8 +21,11 @@ Durante o desenvolvimento, as tabelas são criadas e atualizadas pelo TypeORM co
 | PATCH | `/contas/:id` | Alterar conta aberta |
 | DELETE | `/contas/:id` | Excluir conta aberta sem histórico |
 | POST | `/contas/:id/cancelar` | Cancelar conta aberta |
+| GET | `/contas/:id/previa-liquidacao` | Consultar valores da liquidação sem gravações |
 | POST | `/contas/:id/liquidar` | Liquidar integralmente e movimentar caixa |
 | POST | `/contas/:id/estornar` | Estornar liquidação e reabrir conta |
+
+A listagem `GET /contas` inclui, em cada item de `data`, `planoDeConta: { id, codigo, nome }` e `centroDeCusto: { id, nome } | null`, além dos campos existentes. Contas sem centro de custo permanecem na listagem. Os nomes também são retornados quando o cadastro vinculado está inativo, preservando a identificação histórica. Paginação, ordenação e filtros permanecem iguais.
 
 Criar conta:
 
@@ -43,15 +46,20 @@ Criar conta:
 
 Centro de custo é opcional e pode ser removido na edição com `null`. O plano deve ser analítico. Referências usadas em novas operações devem estar ativas.
 
+Antes de confirmar, consulte `GET /contas/:id/previa-liquidacao?dataPagamento=2026-10-18`. A data é opcional; quando omitida, usa a data financeira atual do backend. A resposta inclui `conta` (`id`, `tipo`, `descricao`, `clienteNome`, `dataEmissao`, `dataVencimento`), `dataAtual`, `dataPagamento`, `valorOriginal`, `taxaJurosDiaria`, `taxaMulta`, `diasAtraso`, `juros`, `multa` e `valorTotal`. Valores monetários e taxas são strings decimais. A consulta não cria liquidações nem movimentações e exige conta aberta e data não futura nem anterior à emissão.
+
 Liquidar:
 
 ```json
 {
   "dataPagamento": "2026-10-18",
   "contaBancariaId": 1,
-  "formaRecebimentoId": 1
+  "formaRecebimentoId": 1,
+  "valorTotalEsperado": "1028.00"
 }
 ```
+
+`valorTotalEsperado` é opcional para compatibilidade com clientes anteriores. O frontend envia o total retornado pela prévia. O backend recalcula sob o bloqueio da conta e retorna HTTP 409 se o total divergir, antes de qualquer gravação. Nesse caso, consulte novamente a prévia e solicite nova confirmação. O valor esperado é apenas uma conferência: não substitui o cálculo nem é persistido.
 
 Juros simples: valor original × taxa diária ÷ 100 × dias de atraso. Multa: valor original × taxa ÷ 100, uma vez, somente se atrasada. As taxas são definidas no cadastro da conta; quando omitidas, são salvas como zero. Podem ser editadas enquanto a conta estiver aberta. A liquidação não aceita taxas: utiliza as salvas na conta e registra uma cópia no histórico. A resposta contém `conta`, `liquidacao` (com dias de atraso, juros, multa e valor total calculados) e `movimento`. Cada encargo é arredondado para centavos (meio para cima); o total soma principal e encargos. Datas de pagamento futuras ou anteriores à emissão são rejeitadas. Sem pagamentos parciais ou parcelamento nesta versão.
 

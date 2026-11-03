@@ -8,6 +8,8 @@ import { SessionGate } from "./SessionGate";
 import LoginPage from "@/app/login/LoginPage";
 import PageHome from "@/app/Page/PageHome";
 import PageDashboard from "@/app/dashboard/PageDashboard";
+import PageContasPagar from "@/app/contas/PageContasPagar";
+import PageContasReceber from "@/app/contas/PageContasReceber";
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +23,8 @@ export const router = createBrowserRouter([
         path: "/",
         element: <PageHome />,
         children: [
+          { path: "contas-a-pagar", element: <PageContasPagar /> },
+          { path: "contas-a-receber", element: <PageContasReceber /> },
           { path: "centros-de-custo", element: <PageCentroDeCusto /> },
           { path: "formas-de-recebimento", element: <PageFormaRecebimento /> },
           { path: "clientes", element: <PageCliente /> },

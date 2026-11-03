@@ -111,7 +111,12 @@ export class ContasService {
   }
 
   async listarContas(dto: FiltroFinanceiroDto) {
-    const r = await this.validacoes.paginar(this.filtroContas(dto), dto);
+    const consulta = this.filtroContas(dto)
+      .leftJoin('c.planoDeConta', 'plano')
+      .addSelect(['plano.id', 'plano.codigo', 'plano.nome'])
+      .leftJoin('c.centroDeCusto', 'centro')
+      .addSelect(['centro.id', 'centro.nome']);
+    const r = await this.validacoes.paginar(consulta, dto);
     return { ...r, data: r.data.map((c) => this.validacoes.apresentar(c)) };
   }
 

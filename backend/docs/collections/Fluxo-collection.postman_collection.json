@@ -1023,6 +1023,48 @@
           "response": []
         },
         {
+          "name": "Prévia da liquidação",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/contas/:id/previa-liquidacao",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "contas",
+                ":id",
+                "previa-liquidacao"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ],
+              "query": [
+                {
+                  "key": "dataPagamento",
+                  "value": "2026-10-18",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Consulta sem gravações. Retorna identificação, data financeira atual, principal, juros, multa e total. dataPagamento é opcional; quando omitida, utiliza a data financeira do backend."
+          }
+        },
+        {
           "name": "Liquidação",
           "request": {
             "auth": {
@@ -1062,7 +1104,8 @@
                   "value": "1"
                 }
               ]
-            }
+            },
+            "description": "Liquida integralmente a conta aberta. Opcionalmente envie valorTotalEsperado com o total da prévia. Se o total recalculado divergir, retorna 409 sem gravar; consulte a prévia novamente e confirme o novo total."
           },
           "response": []
         },

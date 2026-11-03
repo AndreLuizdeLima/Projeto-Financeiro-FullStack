@@ -5,6 +5,8 @@ import {
   Wallet,
   FolderTree,
   LayoutDashboard,
+  ArrowUpFromLine,
+  ArrowDownToLine,
   type LucideIcon,
 } from "lucide-react";
 
@@ -22,6 +24,8 @@ export const navigationItems: NavigationItem[] = [
     to: "/",
     icon: LayoutDashboard,
   },
+  { id: "contas-a-pagar", label: "Contas a pagar", to: "/contas-a-pagar", icon: ArrowUpFromLine },
+  { id: "contas-a-receber", label: "Contas a receber", to: "/contas-a-receber", icon: ArrowDownToLine },
   {
     id: "centros-de-custo",
     label: "Centros de custo",

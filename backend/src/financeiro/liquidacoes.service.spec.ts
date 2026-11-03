@@ -22,6 +22,9 @@ import {
   criarBancoSimulado,
   fixarHoje,
 } from './testing/financeiro-test.helper';
+import { validate } from 'class-validator';
+import { LiquidarContaDto } from './dto/liquidar-conta.dto';
+import { PreviaLiquidacaoDto } from './dto/previa-liquidacao.dto';
 import {
   OrigemMovimento,
   SituacaoConta,
@@ -43,6 +46,7 @@ const setup = () => {
   const service = new LiquidacoesService(banco.db, validacoes, movimentos);
   const conta = criarConta();
   banco.manager.findOne.mockResolvedValue(conta);
+  banco.repository.findOne.mockResolvedValue(conta);
   // Simula somente o identificador gerado na persistência, sem recalcular valores.
   banco.manager.save.mockImplementation((target, dados) =>
     Promise.resolve(
@@ -59,6 +63,142 @@ describe('LiquidacoesService', () => {
     jest.useRealTimers();
     jest.restoreAllMocks();
   });
+  it.each([TipoConta.PAGAR, TipoConta.RECEBER])(
+    'consulta prévia de %s sem gravar ou movimentar caixa',
+    async (tipo) => {
+      const { service, conta, manager, transaction } = setup();
+      conta.tipo = tipo;
+      expect(
+        await service.previa(1, { dataPagamento: pagamento.dataPagamento }),
+      ).toMatchObject({
+        conta: {
+          id: 1,
+          tipo,
+          descricao: 'Material',
+          dataEmissao: '2026-10-01',
+          dataVencimento: '2026-10-10',
+        },
+        dataAtual: '2026-10-20',
+        dataPagamento: '2026-10-13',
+        valorOriginal: '1000.00',
+        diasAtraso: 3,
+        juros: '3.00',
+        multa: '20.00',
+        valorTotal: '1023.00',
+      });
+      expect(manager.save).not.toHaveBeenCalled();
+      expect(transaction).not.toHaveBeenCalled();
+      expect(conta.situacao).toBe(SituacaoConta.ABERTA);
+    },
+  );
+  it('usa a data financeira atual quando a prévia não informa a data', async () => {
+    const { service } = setup();
+    expect(await service.previa(1, {})).toMatchObject({
+      dataAtual: '2026-10-20',
+      dataPagamento: '2026-10-20',
+      diasAtraso: 10,
+      valorTotal: '1030.00',
+    });
+  });
+  it.each(['2026-10-09', '2026-10-10'])(
+    'não aplica encargos na prévia em %s',
+    async (dataPagamento) => {
+      const { service } = setup();
+      expect(await service.previa(1, { dataPagamento })).toMatchObject({
+        diasAtraso: 0,
+        juros: '0.00',
+        multa: '0.00',
+        valorTotal: '1000.00',
+      });
+    },
+  );
+  it('calcula a prévia com as taxas atuais da conta e arredonda para centavos', async () => {
+    const { service, conta } = setup();
+    Object.assign(conta, {
+      valorOriginal: '0.05',
+      taxaJurosDiaria: '10',
+      taxaMulta: '10',
+    });
+    expect(
+      await service.previa(1, { dataPagamento: '2026-10-11' }),
+    ).toMatchObject({ juros: '0.01', multa: '0.01', valorTotal: '0.07' });
+    Object.assign(conta, { taxaJurosDiaria: '0', taxaMulta: '0' });
+    expect(
+      await service.previa(1, { dataPagamento: '2026-10-11' }),
+    ).toMatchObject({ juros: '0.00', multa: '0.00', valorTotal: '0.05' });
+  });
+  it.each([SituacaoConta.LIQUIDADA, SituacaoConta.CANCELADA])(
+    'rejeita prévia de conta %s',
+    async (situacao) => {
+      const { service, conta } = setup();
+      conta.situacao = situacao;
+      await expect(service.previa(1, {})).rejects.toThrow(ConflictException);
+    },
+  );
+  it.each(['2026-10-21', '2026-09-30'])(
+    'rejeita data %s na prévia',
+    async (dataPagamento) => {
+      const { service } = setup();
+      await expect(service.previa(1, { dataPagamento })).rejects.toThrow(
+        BadRequestException,
+      );
+    },
+  );
+  it('rejeita prévia de conta inexistente', async () => {
+    const { service, repository } = setup();
+    repository.findOne.mockResolvedValue(null);
+    await expect(service.previa(99, {})).rejects.toThrow(NotFoundException);
+  });
+  it('liquida quando o total esperado coincide, sem persistir o campo de conferência', async () => {
+    const { service } = setup();
+    const result = await service.liquidar(
+      1,
+      { ...pagamento, valorTotalEsperado: '1023' },
+      7,
+    );
+    expect(result.liquidacao.valorTotal).toBe('1023.00');
+    expect(result.liquidacao).not.toHaveProperty('valorTotalEsperado');
+  });
+  it('rejeita total desatualizado antes de qualquer gravação', async () => {
+    const { service, conta, manager } = setup();
+    const previa = await service.previa(1, {
+      dataPagamento: pagamento.dataPagamento,
+    });
+    conta.taxaMulta = '3';
+    await expect(
+      service.liquidar(
+        1,
+        { ...pagamento, valorTotalEsperado: previa.valorTotal },
+        7,
+      ),
+    ).rejects.toThrow(ConflictException);
+    expect(manager.save).not.toHaveBeenCalled();
+    expect(conta.situacao).toBe(SituacaoConta.ABERTA);
+  });
+  it.each(['-1', '1.001', null, 5])(
+    'rejeita total esperado inválido %s no contrato',
+    async (valorTotalEsperado) => {
+      const erros = await validate(
+        Object.assign(new LiquidarContaDto(), pagamento, {
+          valorTotalEsperado,
+        }),
+      );
+      expect(erros.some((erro) => erro.property === 'valorTotalEsperado')).toBe(
+        true,
+      );
+    },
+  );
+  it.each(['2026-02-30', '2026-13-01', 'texto'])(
+    'rejeita data inválida %s no contrato da prévia',
+    async (dataPagamento) => {
+      const erros = await validate(
+        Object.assign(new PreviaLiquidacaoDto(), { dataPagamento }),
+      );
+      expect(erros.some((erro) => erro.property === 'dataPagamento')).toBe(
+        true,
+      );
+    },
+  );
   it.each([
     [TipoConta.PAGAR, TipoMovimento.SAIDA, 5, null],
     [TipoConta.RECEBER, TipoMovimento.ENTRADA, null, 5],

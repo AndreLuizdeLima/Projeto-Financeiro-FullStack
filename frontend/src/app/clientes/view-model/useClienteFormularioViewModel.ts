@@ -1,3 +1,4 @@
+import { limparCNPJ } from "@/lib/utils";
 import {
   useFormulario,
   obrigatorio,
@@ -25,7 +26,7 @@ export const useClienteFormularioViewModel = ({
     (valores) => {
       const erros: Erros<Valores> = {};
       {
-        const erro = obrigatorio(valores.cnpj);
+        const erro = obrigatorio(limparCNPJ(valores.cnpj));
         if (erro) erros.cnpj = erro;
       }
       {
@@ -42,7 +43,7 @@ export const useClienteFormularioViewModel = ({
   const enviar = async () => {
     if (modo === "consultar" || !form.validarFormulario()) return false;
     const payload = {
-      cnpj: form.valores.cnpj,
+      cnpj: limparCNPJ(form.valores.cnpj),
       razaoSocial: form.valores.razaoSocial.trim(),
       nomeFantasia: form.valores.nomeFantasia.trim(),
     };

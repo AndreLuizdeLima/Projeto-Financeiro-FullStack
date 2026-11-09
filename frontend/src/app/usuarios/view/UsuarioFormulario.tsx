@@ -1,5 +1,4 @@
 import { Campo } from "@/app/cadastros/view/Campo";
-import { FormularioAcoes } from "@/app/cadastros/view/FormularioAcoes";
 
 import {
   useUsuarioFormularioViewModel,
@@ -10,6 +9,7 @@ export const UsuarioFormulario = (props: Props) => {
 
   return (
     <form
+      id={props.formularioId}
       noValidate
       className="flex flex-col gap-4"
       onSubmit={(event) => {
@@ -65,11 +65,6 @@ export const UsuarioFormulario = (props: Props) => {
           Deixe a senha vazia para manter a atual.
         </span>
       )}
-      <FormularioAcoes
-        ocupado={props.ocupado}
-        somenteLeitura={vm.somenteLeitura}
-        fechar={props.fechar}
-      />
     </form>
   );
 };

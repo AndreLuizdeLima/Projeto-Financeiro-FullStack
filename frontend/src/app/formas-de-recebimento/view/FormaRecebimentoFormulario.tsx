@@ -1,5 +1,4 @@
 import { Campo } from "@/app/cadastros/view/Campo";
-import { FormularioAcoes } from "@/app/cadastros/view/FormularioAcoes";
 
 import {
   useFormaRecebimentoFormularioViewModel,
@@ -10,6 +9,7 @@ export const FormaRecebimentoFormulario = (props: Props) => {
 
   return (
     <form
+      id={props.formularioId}
       noValidate
       className="flex flex-col gap-4"
       onSubmit={(event) => {
@@ -25,12 +25,6 @@ export const FormaRecebimentoFormulario = (props: Props) => {
         erro={vm.erros.nome}
         readOnly={vm.somenteLeitura}
         disabled={props.ocupado}
-      />
-
-      <FormularioAcoes
-        ocupado={props.ocupado}
-        somenteLeitura={vm.somenteLeitura}
-        fechar={props.fechar}
       />
     </form>
   );

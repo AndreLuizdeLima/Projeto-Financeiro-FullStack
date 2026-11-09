@@ -2,6 +2,7 @@ import { readJson } from "@/lib/http";
 
 export type Modo = "criar" | "consultar" | "editar";
 export type FormularioProps<T, C, U> = {
+  formularioId: string;
   registro?: T;
   modo: Modo;
   ocupado: boolean;

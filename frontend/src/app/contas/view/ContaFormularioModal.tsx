@@ -197,18 +197,6 @@ export const ContaFormularioModal = (props: ContaFormularioProps) => {
                     </Label>
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <Campo
-                        label="Juros diários (%)"
-                        disabled={
-                          !vm.encargosAtivos || vm.salvando || vm.bloqueada
-                        }
-                        inputMode="decimal"
-                        value={vm.valores.taxaJurosDiaria}
-                        erro={vm.erros.taxaJurosDiaria}
-                        onChange={(e) =>
-                          vm.alterar("taxaJurosDiaria", e.target.value)
-                        }
-                      />
-                      <Campo
                         label="Multa (%)"
                         disabled={
                           !vm.encargosAtivos || vm.salvando || vm.bloqueada
@@ -218,6 +206,18 @@ export const ContaFormularioModal = (props: ContaFormularioProps) => {
                         erro={vm.erros.taxaMulta}
                         onChange={(e) =>
                           vm.alterar("taxaMulta", e.target.value)
+                        }
+                      />
+                      <Campo
+                        label="Juros diários (%)"
+                        disabled={
+                          !vm.encargosAtivos || vm.salvando || vm.bloqueada
+                        }
+                        inputMode="decimal"
+                        value={vm.valores.taxaJurosDiaria}
+                        erro={vm.erros.taxaJurosDiaria}
+                        onChange={(e) =>
+                          vm.alterar("taxaJurosDiaria", e.target.value)
                         }
                       />
                     </div>
@@ -231,17 +231,17 @@ export const ContaFormularioModal = (props: ContaFormularioProps) => {
               )}
             </div>
             <footer className="flex shrink-0 justify-end gap-2 border-t bg-popover p-4 sm:px-6">
+              <Button type="submit" disabled={!vm.podeSalvar}>
+                {vm.salvando && <Spinner />}
+                {vm.salvando ? "Salvando…" : "Salvar"}
+              </Button>
               <Button
                 type="button"
                 variant="outline"
                 disabled={vm.salvando}
                 onClick={vm.fechar}
               >
-                Cancelar
-              </Button>
-              <Button type="submit" disabled={!vm.podeSalvar}>
-                {vm.salvando && <Spinner />}
-                {vm.salvando ? "Salvando…" : "Salvar conta"}
+                Fechar
               </Button>
             </footer>
           </form>

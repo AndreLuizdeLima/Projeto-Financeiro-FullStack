@@ -13,12 +13,14 @@ const Modal = ({
   descricao,
   fechar,
   ocupado,
+  exibirFechar = true,
   children,
 }: {
   titulo: string;
   descricao: string;
   fechar: () => void;
   ocupado: boolean;
+  exibirFechar?: boolean;
   children: ReactNode;
 }) => (
   <Dialog.Root
@@ -35,11 +37,11 @@ const Modal = ({
           {descricao}
         </Dialog.Description>
         <div className="mt-5">{children}</div>
-        <div className="mt-4 flex justify-end">
+        {exibirFechar && <div className="mt-4 flex justify-end">
           <Button variant="outline" disabled={ocupado} onClick={fechar}>
             Fechar
           </Button>
-        </div>
+        </div>}
       </Dialog.Popup>
     </Dialog.Portal>
   </Dialog.Root>
@@ -222,6 +224,7 @@ export const CadastroView = <T extends Registro, C, U>({
       <Modal
         titulo={`${vm.modal.modo === "criar" ? "Novo cadastro" : vm.modal.modo === "consultar" ? "Visualizar" : "Editar"} · ${singular}`}
         descricao="Dados do cadastro."
+        exibirFechar={vm.modal.carregando || !!vm.modal.erro}
         fechar={vm.fechar}
         ocupado={vm.ocupado}
       >
@@ -245,6 +248,7 @@ export const CadastroView = <T extends Registro, C, U>({
             modo: vm.modal.modo,
             ocupado: vm.ocupado,
             salvar: vm.salvar,
+            fechar: vm.fechar,
           })
         )}
         {vm.erroAcao && (

@@ -1,6 +1,6 @@
 import { useId } from "react";
 import { Campo } from "@/app/cadastros/view/Campo";
-import { Button } from "@/components/ui/button";
+import { FormularioAcoes } from "@/app/cadastros/view/FormularioAcoes";
 import { Label } from "@/components/ui/label";
 import { tiposConta, type TipoConta } from "../model/contas-bancarias";
 import {
@@ -67,11 +67,11 @@ export const ContaBancariaFormulario = (props: Props) => {
         )}
       </div>
 
-      {!vm.somenteLeitura && (
-        <Button type="submit" disabled={props.ocupado}>
-          {props.ocupado ? "Salvando…" : "Salvar"}
-        </Button>
-      )}
+      <FormularioAcoes
+        ocupado={props.ocupado}
+        somenteLeitura={vm.somenteLeitura}
+        fechar={props.fechar}
+      />
     </form>
   );
 };

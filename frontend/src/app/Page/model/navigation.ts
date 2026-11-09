@@ -32,6 +32,7 @@ export const navigationItems: NavigationItem[] = [
     to: "/centros-de-custo",
     icon: FolderTree,
   },
+  { id: "plano-de-contas", label: "Plano de contas", to: "/plano-de-contas", icon: FolderTree },
   {
     id: "formas-de-recebimento",
     label: "Formas de recebimento",

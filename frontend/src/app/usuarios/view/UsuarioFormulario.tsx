@@ -1,5 +1,5 @@
 import { Campo } from "@/app/cadastros/view/Campo";
-import { Button } from "@/components/ui/button";
+import { FormularioAcoes } from "@/app/cadastros/view/FormularioAcoes";
 
 import {
   useUsuarioFormularioViewModel,
@@ -65,11 +65,11 @@ export const UsuarioFormulario = (props: Props) => {
           Deixe a senha vazia para manter a atual.
         </span>
       )}
-      {!vm.somenteLeitura && (
-        <Button type="submit" disabled={props.ocupado}>
-          {props.ocupado ? "Salvando…" : "Salvar"}
-        </Button>
-      )}
+      <FormularioAcoes
+        ocupado={props.ocupado}
+        somenteLeitura={vm.somenteLeitura}
+        fechar={props.fechar}
+      />
     </form>
   );
 };

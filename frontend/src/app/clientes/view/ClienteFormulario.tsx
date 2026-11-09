@@ -1,5 +1,5 @@
 import { Campo } from "@/app/cadastros/view/Campo";
-import { Button } from "@/components/ui/button";
+import { FormularioAcoes } from "@/app/cadastros/view/FormularioAcoes";
 
 import {
   useClienteFormularioViewModel,
@@ -47,11 +47,11 @@ export const ClienteFormulario = (props: Props) => {
         maxLength={100}
       />
 
-      {!vm.somenteLeitura && (
-        <Button type="submit" disabled={props.ocupado}>
-          {props.ocupado ? "Salvando…" : "Salvar"}
-        </Button>
-      )}
+      <FormularioAcoes
+        ocupado={props.ocupado}
+        somenteLeitura={vm.somenteLeitura}
+        fechar={props.fechar}
+      />
     </form>
   );
 };

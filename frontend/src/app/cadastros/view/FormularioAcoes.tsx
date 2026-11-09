@@ -18,7 +18,12 @@ export function FormularioAcoes({
           {ocupado ? "Salvando…" : "Salvar"}
         </Button>
       )}
-      <Button type="button" variant="outline" disabled={ocupado} onClick={fechar}>
+      <Button
+        type="button"
+        variant="outline"
+        disabled={ocupado}
+        onClick={fechar}
+      >
         Fechar
       </Button>
     </footer>

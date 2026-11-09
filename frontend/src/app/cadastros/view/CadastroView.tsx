@@ -37,11 +37,13 @@ const Modal = ({
           {descricao}
         </Dialog.Description>
         <div className="mt-5">{children}</div>
-        {exibirFechar && <div className="mt-4 flex justify-end">
-          <Button variant="outline" disabled={ocupado} onClick={fechar}>
-            Fechar
-          </Button>
-        </div>}
+        {exibirFechar && (
+          <div className="mt-4 flex justify-end">
+            <Button variant="outline" disabled={ocupado} onClick={fechar}>
+              Fechar
+            </Button>
+          </div>
+        )}
       </Dialog.Popup>
     </Dialog.Portal>
   </Dialog.Root>

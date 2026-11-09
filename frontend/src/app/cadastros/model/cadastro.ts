@@ -5,6 +5,7 @@ export type FormularioProps<T, C, U> = {
   registro?: T;
   modo: Modo;
   ocupado: boolean;
+  fechar: () => void;
   salvar: (payload: C | U) => Promise<boolean>;
 };
 export type Registro = { id: number; isActive: boolean };

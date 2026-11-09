@@ -66,8 +66,6 @@ export const ContaBancariaFormulario = (props: Props) => {
           </span>
         )}
       </div>
-
-
     </form>
   );
 };

@@ -36,7 +36,35 @@ export const UsuarioFormulario = (props: Props) => {
         readOnly={vm.somenteLeitura}
         disabled={props.ocupado}
       />
-
+      {!vm.somenteLeitura && (
+        <Campo
+          label="Senha"
+          type="password"
+          value={vm.valores.password}
+          onChange={(event) => vm.alterar("password", event.target.value)}
+          erro={vm.erros.password}
+          readOnly={vm.somenteLeitura}
+          disabled={props.ocupado}
+          autoComplete="new-password"
+        />
+      )}
+      {!vm.somenteLeitura && (
+        <Campo
+          label="Confirme a senha"
+          type="password"
+          value={vm.valores.confirmacao}
+          onChange={(event) => vm.alterar("confirmacao", event.target.value)}
+          erro={vm.erros.confirmacao}
+          readOnly={vm.somenteLeitura}
+          disabled={props.ocupado}
+          autoComplete="new-password"
+        />
+      )}
+      {props.modo === "editar" && (
+        <span className="text-xs text-muted-foreground">
+          Deixe a senha vazia para manter a atual.
+        </span>
+      )}
     </form>
   );
 };

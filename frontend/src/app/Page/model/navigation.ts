@@ -24,12 +24,28 @@ export const navigationItems: NavigationItem[] = [
     to: "/",
     icon: LayoutDashboard,
   },
-  { id: "contas-a-pagar", label: "Contas a pagar", to: "/contas-a-pagar", icon: ArrowUpFromLine },
-  { id: "contas-a-receber", label: "Contas a receber", to: "/contas-a-receber", icon: ArrowDownToLine },
+  {
+    id: "contas-a-pagar",
+    label: "Contas a pagar",
+    to: "/contas-a-pagar",
+    icon: ArrowUpFromLine,
+  },
+  {
+    id: "contas-a-receber",
+    label: "Contas a receber",
+    to: "/contas-a-receber",
+    icon: ArrowDownToLine,
+  },
   {
     id: "centros-de-custo",
     label: "Centros de custo",
     to: "/centros-de-custo",
+    icon: FolderTree,
+  },
+  {
+    id: "plano-de-contas",
+    label: "Plano de contas",
+    to: "/plano-de-contas",
     icon: FolderTree,
   },
   {

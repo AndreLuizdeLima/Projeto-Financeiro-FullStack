@@ -249,7 +249,9 @@ export const CadastroView = <T extends Registro, C, U>({
             <div role="alert" className="flex flex-col gap-3">
               <span>{vm.modal.erro}</span>
               <Button
-                onClick={() => void vm.abrir(vm.modal!.modo, vm.modal!.registro)}
+                onClick={() =>
+                  void vm.abrir(vm.modal!.modo, vm.modal!.registro)
+                }
               >
                 Tentar novamente
               </Button>
@@ -261,6 +263,7 @@ export const CadastroView = <T extends Registro, C, U>({
               modo: vm.modal.modo,
               ocupado: vm.ocupado,
               salvar: vm.salvar,
+              fechar: vm.fechar,
             })
           )}
           {vm.erroAcao && (

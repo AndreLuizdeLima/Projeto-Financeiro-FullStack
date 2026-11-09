@@ -12,6 +12,7 @@ type Props = {
   disabled?: boolean;
   erro?: string;
   opcional?: boolean;
+  permitirInativos?: boolean;
 };
 
 export const SeletorPesquisavel = ({
@@ -22,6 +23,7 @@ export const SeletorPesquisavel = ({
   disabled,
   erro,
   opcional,
+  permitirInativos = false,
 }: Props) => {
   const id = useId();
   return (
@@ -75,7 +77,7 @@ export const SeletorPesquisavel = ({
                   <Combobox.Item
                     key={opcao.id}
                     value={opcao}
-                    disabled={!opcao.isActive}
+                    disabled={!permitirInativos && !opcao.isActive}
                     className="relative flex cursor-default items-center rounded-md py-2 pr-8 pl-2 text-sm outline-none data-highlighted:bg-primary data-highlighted:text-primary-foreground data-selected:bg-primary data-selected:text-primary-foreground data-disabled:opacity-50"
                   >
                     <span className="min-w-0 wrap-break-word">

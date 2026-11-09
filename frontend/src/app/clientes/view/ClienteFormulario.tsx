@@ -47,8 +47,6 @@ export const ClienteFormulario = (props: Props) => {
         disabled={props.ocupado}
         maxLength={100}
       />
-
-
     </form>
   );
 };

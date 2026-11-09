@@ -26,8 +26,6 @@ export const CentroDeCustoFormulario = (props: Props) => {
         readOnly={vm.somenteLeitura}
         disabled={props.ocupado}
       />
-
-
     </form>
   );
 };

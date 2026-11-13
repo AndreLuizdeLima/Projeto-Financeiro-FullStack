@@ -1,5 +1,4 @@
 import { Campo } from "@/app/cadastros/view/Campo";
-import { Button } from "@/components/ui/button";
 
 import {
   useUsuarioFormularioViewModel,
@@ -10,6 +9,7 @@ export const UsuarioFormulario = (props: Props) => {
 
   return (
     <form
+      id={props.formularioId}
       noValidate
       className="flex flex-col gap-4"
       onSubmit={(event) => {
@@ -64,11 +64,6 @@ export const UsuarioFormulario = (props: Props) => {
         <span className="text-xs text-muted-foreground">
           Deixe a senha vazia para manter a atual.
         </span>
-      )}
-      {!vm.somenteLeitura && (
-        <Button type="submit" disabled={props.ocupado}>
-          {props.ocupado ? "Salvando…" : "Salvar"}
-        </Button>
       )}
     </form>
   );

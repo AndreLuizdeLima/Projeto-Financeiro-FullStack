@@ -22,6 +22,7 @@ import { LiquidacoesService } from '@/financeiro/liquidacoes.service';
 import { CreateContaDto } from '@/financeiro/dto/create-conta.dto';
 import { FiltroFinanceiroDto } from '@/financeiro/dto/filtro-financeiro.dto';
 import { LiquidarContaDto } from '@/financeiro/dto/liquidar-conta.dto';
+import { PreviaLiquidacaoDto } from '@/financeiro/dto/previa-liquidacao.dto';
 import { UpdateContaDto } from '@/financeiro/dto/update-conta.dto';
 @UseGuards(JwtAuthGuard)
 @UsePipes(
@@ -67,6 +68,13 @@ export class ContasController {
 
   @Post(':id/cancelar') cancelar(@Param('id', ParseIntPipe) id: number) {
     return this.service.cancelarConta(id);
+  }
+
+  @Get(':id/previa-liquidacao') previaLiquidacao(
+    @Param('id', ParseIntPipe) id: number,
+    @Query() dto: PreviaLiquidacaoDto,
+  ) {
+    return this.liquidacoes.previa(id, dto);
   }
 
   @Post(':id/liquidar') liquidar(

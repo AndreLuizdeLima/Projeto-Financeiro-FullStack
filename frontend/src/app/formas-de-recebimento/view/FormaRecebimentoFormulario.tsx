@@ -1,5 +1,4 @@
 import { Campo } from "@/app/cadastros/view/Campo";
-import { Button } from "@/components/ui/button";
 
 import {
   useFormaRecebimentoFormularioViewModel,
@@ -10,6 +9,7 @@ export const FormaRecebimentoFormulario = (props: Props) => {
 
   return (
     <form
+      id={props.formularioId}
       noValidate
       className="flex flex-col gap-4"
       onSubmit={(event) => {
@@ -26,12 +26,6 @@ export const FormaRecebimentoFormulario = (props: Props) => {
         readOnly={vm.somenteLeitura}
         disabled={props.ocupado}
       />
-
-      {!vm.somenteLeitura && (
-        <Button type="submit" disabled={props.ocupado}>
-          {props.ocupado ? "Salvando…" : "Salvar"}
-        </Button>
-      )}
     </form>
   );
 };

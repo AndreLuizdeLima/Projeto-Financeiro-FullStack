@@ -1,15 +1,16 @@
 import { Campo } from "@/app/cadastros/view/Campo";
-import { Button } from "@/components/ui/button";
 
 import {
   useClienteFormularioViewModel,
   type Props,
 } from "../view-model/useClienteFormularioViewModel";
+import { formatCNPJ } from "@/lib/utils";
 export const ClienteFormulario = (props: Props) => {
   const vm = useClienteFormularioViewModel(props);
 
   return (
     <form
+      id={props.formularioId}
       noValidate
       className="flex flex-col gap-4"
       onSubmit={(event) => {
@@ -20,7 +21,7 @@ export const ClienteFormulario = (props: Props) => {
       <Campo
         label="CNPJ"
         type="text"
-        value={vm.valores.cnpj}
+        value={formatCNPJ(vm.valores.cnpj)}
         onChange={(event) => vm.alterar("cnpj", event.target.value)}
         erro={vm.erros.cnpj}
         readOnly={vm.somenteLeitura}
@@ -46,12 +47,6 @@ export const ClienteFormulario = (props: Props) => {
         disabled={props.ocupado}
         maxLength={100}
       />
-
-      {!vm.somenteLeitura && (
-        <Button type="submit" disabled={props.ocupado}>
-          {props.ocupado ? "Salvando…" : "Salvar"}
-        </Button>
-      )}
     </form>
   );
 };

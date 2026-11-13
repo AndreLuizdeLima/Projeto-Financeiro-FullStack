@@ -1,6 +1,5 @@
 import { useId } from "react";
 import { Campo } from "@/app/cadastros/view/Campo";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { tiposConta, type TipoConta } from "../model/contas-bancarias";
 import {
@@ -12,6 +11,7 @@ export const ContaBancariaFormulario = (props: Props) => {
   const tipoId = useId();
   return (
     <form
+      id={props.formularioId}
       noValidate
       className="flex flex-col gap-4"
       onSubmit={(event) => {
@@ -66,12 +66,6 @@ export const ContaBancariaFormulario = (props: Props) => {
           </span>
         )}
       </div>
-
-      {!vm.somenteLeitura && (
-        <Button type="submit" disabled={props.ocupado}>
-          {props.ocupado ? "Salvando…" : "Salvar"}
-        </Button>
-      )}
     </form>
   );
 };

@@ -1,3 +1,4 @@
+import { Checkbox } from "@/components/ui/checkbox";
 import { useId } from "react";
 import { Campo } from "@/app/cadastros/view/Campo";
 import { Label } from "@/components/ui/label";
@@ -9,6 +10,7 @@ import {
 export const ContaBancariaFormulario = (props: Props) => {
   const vm = useContaBancariaFormularioViewModel(props);
   const tipoId = useId();
+  const saldoId = useId();
   return (
     <form
       id={props.formularioId}
@@ -66,6 +68,36 @@ export const ContaBancariaFormulario = (props: Props) => {
           </span>
         )}
       </div>
+      {vm.exibirSaldo && (
+        <div className="flex flex-col gap-4 border-t pt-4">
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id={saldoId}
+              checked={vm.valores.incluirSaldo}
+              onCheckedChange={(checked) => vm.alterar("incluirSaldo", checked)}
+              disabled={props.ocupado || props.contaCriada}
+            />
+            <Label htmlFor={saldoId}>Lançar saldo inicial</Label>
+          </div>
+          {vm.valores.incluirSaldo && (
+            <Campo
+              label="Saldo inicial *"
+              value={vm.valores.saldoInicial}
+              onChange={(event) => vm.alterarSaldo(event.target.value)}
+              inputMode="numeric"
+              placeholder="R$ 0,00"
+              erro={vm.erros.saldoInicial}
+              disabled={props.ocupado}
+            />
+          )}
+          {props.contaCriada && (
+            <p role="status" className="text-sm text-muted-foreground">
+              A conta já foi criada. Salve novamente para tentar lançar somente
+              o saldo inicial.
+            </p>
+          )}
+        </div>
+      )}
     </form>
   );
 };

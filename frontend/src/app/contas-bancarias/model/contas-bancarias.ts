@@ -22,3 +22,5 @@ export const api = criarCadastroApi<
   CriarContaBancaria,
   AtualizarContaBancaria
 >("/conta-bancaria");
+
+export type CriarContaComSaldo = CriarContaBancaria & { saldoInicial?: string };

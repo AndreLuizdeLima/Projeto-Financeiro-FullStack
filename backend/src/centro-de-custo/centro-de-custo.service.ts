@@ -25,8 +25,9 @@ export class CentroDeCustoService {
     createCentroDeCustoDto: CreateCentroDeCustoDto,
     criadoPorId: number,
   ) {
-    const user = await this.userRepository.findOneBy({
-      id: criadoPorId,
+    const user = await this.userRepository.findOne({
+      where: { id: criadoPorId },
+      select: { id: true },
     });
 
     if (!user) {
@@ -35,11 +36,16 @@ export class CentroDeCustoService {
 
     const cliente = this.cetroDeCustoRepository.create({
       ...createCentroDeCustoDto,
-      criadoPor: user,
+      criadoPor: { id: user.id },
       isActive: true,
     });
 
-    return this.cetroDeCustoRepository.save(cliente);
+    const salvo = await this.cetroDeCustoRepository.save(cliente);
+    return {
+      id: salvo.id,
+      nome: salvo.nome,
+      isActive: salvo.isActive,
+    };
   }
 
   async findAll({ page, limit }: PaginationQueryDto) {

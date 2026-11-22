@@ -22,8 +22,9 @@ export class ClienteService {
   ) {}
 
   async create(createClienteDto: CreateClienteDto, criadoPorId: number) {
-    const user = await this.userRepository.findOneBy({
-      id: criadoPorId,
+    const user = await this.userRepository.findOne({
+      where: { id: criadoPorId },
+      select: { id: true },
     });
 
     if (!user) {
@@ -32,11 +33,18 @@ export class ClienteService {
 
     const cliente = this.clienteRepository.create({
       ...createClienteDto,
-      criadoPor: user,
+      criadoPor: { id: user.id },
       isActive: true,
     });
 
-    return this.clienteRepository.save(cliente);
+    const salvo = await this.clienteRepository.save(cliente);
+    return {
+      id: salvo.id,
+      nomeFantasia: salvo.nomeFantasia,
+      razaoSocial: salvo.razaoSocial,
+      cnpj: salvo.cnpj,
+      isActive: salvo.isActive,
+    };
   }
 
   async findAll({ page, limit }: PaginationQueryDto) {

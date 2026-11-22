@@ -1,3 +1,4 @@
+import PageMovimentacoes from "@/app/movimentacoes/PageMovimentacoes";
 import PageCentroDeCusto from "@/app/centros-de-custo/PageCentroDeCusto";
 import PagePlanoDeContas from "@/app/plano-de-contas/PagePlanoDeContas";
 import PageFormaRecebimento from "@/app/formas-de-recebimento/PageFormaRecebimento";
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
         path: "/",
         element: <PageHome />,
         children: [
+          { path: "movimentacoes", element: <PageMovimentacoes /> },
           { path: "contas-a-pagar", element: <PageContasPagar /> },
           { path: "contas-a-receber", element: <PageContasReceber /> },
           { path: "centros-de-custo", element: <PageCentroDeCusto /> },

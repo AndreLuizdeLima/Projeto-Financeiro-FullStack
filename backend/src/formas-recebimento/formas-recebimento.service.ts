@@ -25,8 +25,9 @@ export class FormasRecebimentoService {
     createFormasRecebimentoDto: CreateFormasRecebimentoDto,
     criadoPorId: number,
   ) {
-    const user = await this.userRepository.findOneBy({
-      id: criadoPorId,
+    const user = await this.userRepository.findOne({
+      where: { id: criadoPorId },
+      select: { id: true },
     });
 
     if (!user) {
@@ -35,11 +36,16 @@ export class FormasRecebimentoService {
 
     const cliente = this.formasRecebimentoRepository.create({
       ...createFormasRecebimentoDto,
-      criadoPor: user,
+      criadoPor: { id: user.id },
       isActive: true,
     });
 
-    return this.formasRecebimentoRepository.save(cliente);
+    const salvo = await this.formasRecebimentoRepository.save(cliente);
+    return {
+      id: salvo.id,
+      nome: salvo.nome,
+      isActive: salvo.isActive,
+    };
   }
 
   async findAll({ page, limit }: PaginationQueryDto) {

@@ -1,3 +1,5 @@
+import { mascaraValor } from "@/lib/mascara-valor";
+import { decimalSaldo, validarSaldo } from "../model/saldo-inicial";
 import {
   useFormulario,
   obrigatorio,
@@ -8,25 +10,34 @@ import {
   tiposConta,
   type TipoConta,
   type ContaBancaria,
-  type CriarContaBancaria,
+  type CriarContaComSaldo,
   type AtualizarContaBancaria,
 } from "../model/contas-bancarias";
-type Valores = { nome: string; conta: string; tipo: TipoConta };
+type Valores = {
+  nome: string;
+  conta: string;
+  tipo: TipoConta;
+  incluirSaldo: boolean;
+  saldoInicial: string;
+};
 export type Props = FormularioProps<
   ContaBancaria,
-  CriarContaBancaria,
+  CriarContaComSaldo,
   AtualizarContaBancaria
->;
+> & { contaCriada?: boolean };
 export const useContaBancariaFormularioViewModel = ({
   registro,
   modo,
   salvar,
+  contaCriada,
 }: Props) => {
   const form = useFormulario<Valores>(
     {
       nome: registro?.nome ?? "",
       conta: registro?.conta ?? "",
       tipo: registro?.tipo ?? "ContaCorrente",
+      incluirSaldo: false,
+      saldoInicial: "",
     },
     (valores) => {
       const erros: Erros<Valores> = {};
@@ -40,6 +51,10 @@ export const useContaBancariaFormularioViewModel = ({
       }
       if (!Object.hasOwn(tiposConta, valores.tipo))
         erros.tipo = "Selecione um tipo válido.";
+      if (modo === "criar" && valores.incluirSaldo) {
+        const erro = validarSaldo(valores.saldoInicial);
+        if (erro) erros.saldoInicial = erro;
+      }
       return erros;
     },
   );
@@ -50,8 +65,21 @@ export const useContaBancariaFormularioViewModel = ({
       conta: form.valores.conta.trim(),
       tipo: form.valores.tipo,
     };
-    if (modo === "criar") return salvar(payload);
+    if (modo === "criar")
+      return salvar({
+        ...payload,
+        ...(form.valores.incluirSaldo
+          ? { saldoInicial: decimalSaldo(form.valores.saldoInicial) }
+          : {}),
+      });
     return salvar({ ...payload, isActive: registro!.isActive });
   };
-  return { ...form, enviar, somenteLeitura: modo === "consultar" };
+  return {
+    ...form,
+    enviar,
+    somenteLeitura: modo === "consultar" || !!contaCriada,
+    exibirSaldo: modo === "criar",
+    alterarSaldo: (valor: string) =>
+      form.alterar("saldoInicial", mascaraValor(valor)),
+  };
 };

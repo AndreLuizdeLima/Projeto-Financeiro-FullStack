@@ -33,3 +33,7 @@ Projeto Full Stack de **gestão financeira**, desenvolvido para aplicar regras d
 ## Documentação
 
 - [Plano de contas: criação e atualização](backend/docs/plano-de-contas.md)
+
+## Implantação
+
+Dockerfiles, PostgreSQL exclusivo, migrations e Nginx: [guia de implantação](deploy/README.md).

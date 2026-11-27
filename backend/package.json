@@ -19,7 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:financeiro": "npm test -- --runInBand --testPathPatterns=src/financeiro/",
-    "test:financeiro:cov": "npm run test:financeiro -- --coverage --collectCoverageFrom=financeiro/*.service.ts --collectCoverageFrom=financeiro/financeiro.utils.ts"
+    "test:financeiro:cov": "npm run test:financeiro -- --coverage --collectCoverageFrom=financeiro/*.service.ts --collectCoverageFrom=financeiro/financeiro.utils.ts",
+    "deploy:database": "node dist/database/deploy.js"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.3",

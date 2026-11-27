@@ -25,8 +25,9 @@ export class ContaBancariaService {
     createContaBancariaDto: CreateContaBancariaDto,
     criadoPorId: number,
   ) {
-    const user = await this.userRepository.findOneBy({
-      id: criadoPorId,
+    const user = await this.userRepository.findOne({
+      where: { id: criadoPorId },
+      select: { id: true },
     });
 
     if (!user) {
@@ -35,11 +36,18 @@ export class ContaBancariaService {
 
     const cliente = this.contaBancariaRepository.create({
       ...createContaBancariaDto,
-      criadoPor: user,
+      criadoPor: { id: user.id },
       isActive: true,
     });
 
-    return this.contaBancariaRepository.save(cliente);
+    const salvo = await this.contaBancariaRepository.save(cliente);
+    return {
+      id: salvo.id,
+      nome: salvo.nome,
+      conta: salvo.conta,
+      tipo: salvo.tipo,
+      isActive: salvo.isActive,
+    };
   }
 
   async findAll({ page, limit }: PaginationQueryDto) {

@@ -1,0 +1,29 @@
+# Exemplo HTTP para instalar no Nginx do servidor.
+# Ajuste o domínio e as portas se alterou .env.deploy.
+# Após validar o HTTP, configure o certificado/HTTPS desse domínio.
+server {
+    listen 80;
+    server_name financeiro.seudominio.com.br;
+    client_max_body_size 1m;
+
+    location = /api {
+        return 308 /api/;
+    }
+
+    location /api/ {
+        # A barra final remove /api/ antes de encaminhar ao NestJS.
+        proxy_pass http://127.0.0.1:3000/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

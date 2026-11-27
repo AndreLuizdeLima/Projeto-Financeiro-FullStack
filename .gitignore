@@ -1,1 +1,6 @@
 .DS_Store
+
+# Implantação local: segredos, backups e dados persistentes
+.env.deploy
+/docker-data/
+/backups/

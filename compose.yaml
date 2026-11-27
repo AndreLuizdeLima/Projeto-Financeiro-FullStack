@@ -1,0 +1,95 @@
+name: fluxo-financeiro
+
+x-database-env: &database-env
+  DB_DATABASE_HOST: db
+  DB_DATABASE_PORT: 5432
+  DB_DATABASE_USERNAME: ${POSTGRES_USER:-fluxo}
+  DB_DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no .env.deploy}
+  DB_DATABASE_DATABASE: ${POSTGRES_DB:-financeiro}
+
+x-backend: &backend-image
+  image: fluxo-backend:local
+  build:
+    context: ./backend
+
+services:
+  db:
+    image: postgres:17-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-financeiro}
+      POSTGRES_USER: ${POSTGRES_USER:-fluxo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no .env.deploy}
+    volumes:
+      - ./docker-data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    logging: &logging
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  migration:
+    <<: *backend-image
+    command: ["node", "dist/database/deploy.js"]
+    restart: "no"
+    environment:
+      <<: *database-env
+      SEED_ADMIN_NOME: ${SEED_ADMIN_NOME:-Administrador}
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:?Defina SEED_ADMIN_EMAIL no .env.deploy}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:?Defina SEED_ADMIN_PASSWORD no .env.deploy}
+    depends_on:
+      db:
+        condition: service_healthy
+    logging: *logging
+
+  backend:
+    <<: *backend-image
+    restart: unless-stopped
+    init: true
+    environment:
+      <<: *database-env
+      NODE_ENV: production
+      PORT: 3000
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:?Defina FRONTEND_ORIGIN no .env.deploy}
+      DB_DATABASE_AUTO_LOAD_ENTITIES: "true"
+      DB_DATABASE_SYNCHRONIZE: "false"
+      JWT_SECRET: ${JWT_SECRET:?Defina JWT_SECRET no .env.deploy}
+      JWT_TOKEN_AUDIENCE: ${JWT_TOKEN_AUDIENCE:-fluxo-web}
+      JWT_TOKEN_ISSUER: ${JWT_TOKEN_ISSUER:-fluxo-api}
+      JWT_ACCESS_TOKEN_TTL: 1800
+      JWT_REFRESH_TOKEN_TTL: 14400
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-3000}:3000"
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    logging: *logging
+
+  frontend:
+    image: fluxo-frontend:local
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    logging: *logging

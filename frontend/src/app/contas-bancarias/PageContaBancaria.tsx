@@ -15,7 +15,9 @@ const PageContaBancaria = () => {
       singular="Conta bancária"
       colunas={colunas}
       vm={vm}
-      formulario={(props) => <ContaBancariaFormulario {...props} />}
+      formulario={(props) => (
+        <ContaBancariaFormulario {...props} contaCriada={vm.contaCriada} />
+      )}
     />
   );
 };

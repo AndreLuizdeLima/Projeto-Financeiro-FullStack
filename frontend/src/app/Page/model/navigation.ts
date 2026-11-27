@@ -8,6 +8,8 @@ import {
   ArrowUpFromLine,
   ArrowDownToLine,
   type LucideIcon,
+  MapPinned,
+  ArrowLeftRight,
 } from "lucide-react";
 
 export type NavigationItem = {
@@ -37,16 +39,22 @@ export const navigationItems: NavigationItem[] = [
     icon: ArrowDownToLine,
   },
   {
-    id: "centros-de-custo",
-    label: "Centros de custo",
-    to: "/centros-de-custo",
-    icon: FolderTree,
+    id: "movimentacoes",
+    label: "Movimentações financeiras",
+    to: "/movimentacoes",
+    icon: ArrowLeftRight,
   },
   {
     id: "plano-de-contas",
     label: "Plano de contas",
     to: "/plano-de-contas",
     icon: FolderTree,
+  },
+  {
+    id: "centros-de-custo",
+    label: "Centros de custo",
+    to: "/centros-de-custo",
+    icon: MapPinned,
   },
   {
     id: "formas-de-recebimento",
